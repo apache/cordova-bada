@@ -11,17 +11,17 @@ using namespace Osp::Web::Controls;
 WebForm::WebForm(void)
 	:__pWeb(null), __phonegapCommand(null)
 {
-	location = null;
+	geolocation = null;
 	device = null;
 	accel = null;
 }
 
 WebForm::~WebForm(void)
 {
-	delete __phonegapCommand;
-	delete location;
-	delete device;
-	delete accel;
+//	delete __phonegapCommand;
+//	delete location;
+//	delete device;
+//	delete accel;
 }
 
 bool
@@ -44,7 +44,7 @@ WebForm::OnInitializing(void)
 		goto CATCH;
 	}
 
-	__pWeb->LoadUrl("file:///Res/index.html");
+	__pWeb->LoadUrl("file:///Res/sample.html");
 
 	return r;
 
@@ -97,7 +97,9 @@ bool
 WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType type) {
 	AppLogDebug("URL REQUESTED %S", url.GetPointer());
 	if(url.StartsWith("gap://", 0)) {
-		AppLogDebug("PhoneGap command");
+		AppLogDebug("PhoneGap command %S", url.GetPointer());
+		//__phonegapCommand = null;
+
 		__phonegapCommand = new String(url);
 		// FIXME: for some reason this does not work if we return true. Web freezes.
 //		__pWeb->StopLoading();
@@ -120,34 +122,30 @@ WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType typ
 
 void
 WebForm::OnLoadingCompleted() {
+	// Setting DeviceInfo to initialize PhoneGap
+	String* deviceInfo;
+	deviceInfo = __pWeb->EvaluateJavascriptN(L"DeviceInfo.uuid");
+	if(deviceInfo->IsEmpty()) {
+		device->SetDeviceInfo();
+	} else {
+		AppLogDebug("DeviceInfo = %S", deviceInfo->GetPointer());
+	}
+	delete deviceInfo;
+
+	// Tell the JS code that we've gotten this command, and we're ready for another
+	__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
+
 	int index;
+	// Analyzing PhoneGap command
 	if(__phonegapCommand) {
 		if(__phonegapCommand->IndexOf(L"GeoLocation", 0, index) == E_SUCCESS) {
-			if(!location->IsWatching()) {
-				location->StartWatching();
-			} else {
-				location->StopWatching();
-			}
-			delete __phonegapCommand;
-			__phonegapCommand = null;
-			AppLogDebug("GeoLocation command completed");
-		}
-		else if(__phonegapCommand->IndexOf(L"Device", 0, index) == E_SUCCESS) {
-			device->GetSystemInfo();
-			delete __phonegapCommand;
-			__phonegapCommand = null;
-			AppLogDebug("Device command completed");
+			geolocation->Run(*__phonegapCommand);
 		}
 		else if(__phonegapCommand->IndexOf(L"Accelerometer", 0, index) == E_SUCCESS) {
-			if(!accel->IsStarted()) {
-				accel->StartSensor();
-			} else {
-				accel->StopSensor();
-			}
-			delete __phonegapCommand;
-			__phonegapCommand = null;
-			AppLogDebug("Accelerometer command completed");
+			accel->Run(*__phonegapCommand);
 		}
+		delete __phonegapCommand;
+		__phonegapCommand = null;
 	}
 	else {
 		AppLogDebug("Non PhoneGap command completed");
@@ -181,7 +179,7 @@ WebForm::CreateWebControl(void)
 	__pWeb->SetFocus();
 
 	if(__pWeb) {
-		location = new GeoLocation(__pWeb, NULL);
+		geolocation = new GeoLocation(__pWeb, NULL);
 		device = new Device(__pWeb, null);
 		accel = new Accelerometer(__pWeb, null);
 	}

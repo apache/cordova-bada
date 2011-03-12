@@ -26,11 +26,12 @@ Device::Run(const String& command) {
 }
 
 result
-Device::GetSystemInfo() {
+Device::SetDeviceInfo() {
 	result r = E_SUCCESS;
 	String* jsResponse = null;
 	String platformVersion;
 	String apiVersion;
+	String imei;
 	int screen_height = 0;
 	int screen_width = 0;
 
@@ -47,10 +48,14 @@ Device::GetSystemInfo() {
     r = SystemInfo::GetValue("APIVersion", apiVersion);
     TryCatch(r == E_SUCCESS, , "SystemInfo: To get a value is failed");
 
+    r = SystemInfo::GetValue("IMEI", imei);
+    TryCatch(r == E_SUCCESS, , "SystemInfo: To get a value is failed");
+
     if(r == E_SUCCESS) {
     	String res;
-    	res.Format(128, L"updateSystemInfo({PlatformName: 'Bada', PlatformVersion:'%S', APIVersion:'%S'}, '')", platformVersion.GetPointer(),
-																			     apiVersion.GetPointer());
+//    	res.Format(128, L"updateSystemInfo({PlatformName: 'Bada', PlatformVersion:'%S', APIVersion:'%S', IMEI: '%s'}, '')", platformVersion.GetPointer(),
+//																			     apiVersion.GetPointer(), imei.GetPointer());
+    	res.Format(1024, L"DeviceInfo = {platform: 'bada', version:'%S', name:'n/a', gap: '0.9.4', uuid: '%S'}", platformVersion.GetPointer(), imei.GetPointer());
     	jsResponse = pWeb->EvaluateJavascriptN(res);
     	AppLogDebug("%S", res.GetPointer());
     	AppLogDebug("Result: %S", jsResponse->GetPointer());

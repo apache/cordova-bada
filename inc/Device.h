@@ -19,7 +19,7 @@ public:
 	Device(Web* pWeb, ArrayList* settings);
 	virtual ~Device();
 public:
-	result GetSystemInfo();
+	result SetDeviceInfo();
 	virtual void Run(const String& command);
 };
 

@@ -22,6 +22,19 @@ Accelerometer::~Accelerometer() {
 
 void
 Accelerometer::Run(const String& command) {
+	if (!command.IsEmpty()) {
+		String method(128);
+		command.SubString((String(L"gap://Accelerometer")).GetLength(), method);
+		if(method.StartsWith(L"start", 1) && !IsStarted()) {
+			StartSensor();
+		}
+		if(method.StartsWith(L"stop", 1) && IsStarted()) {
+			StopSensor();
+		}
+		AppLogDebug("Accelerometer command %S completed", method.GetPointer());
+	} else {
+		AppLogDebug("Can't run empty command");
+	}
 }
 
 bool
@@ -74,7 +87,7 @@ Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, res
 	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timeStamp);
 
 	String res;
-	res.Format(256, L"updateSensorData({x:%f, y:%f, z:%f, timestamp:%d})", x, y, z, timeStamp);
+	res.Format(1024, L"navigator.accelerometer._onAccelUpdate(%f,%f,%f);", x, y, z);
 	jsResponse = pWeb->EvaluateJavascriptN(res);
 	AppLogDebug("Result: %S", jsResponse->GetPointer());
 	delete jsResponse;

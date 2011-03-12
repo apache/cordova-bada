@@ -24,13 +24,17 @@ GeoLocation::~GeoLocation() {
 
 void
 GeoLocation::Run(const String& command) {
-	if(command == "startWatching") {
-
-	}
-	else if(command == "StopWatching") {
-
-	} else if(command == "GetLastKnownLocation") {
-
+	if(!command.IsEmpty()) {
+		String method(128);
+		command.SubString(String(L"gap://Location").GetLength(), method);
+		if(command.StartsWith(L"startLocation", 1) && !IsWatching()) {
+			StartWatching();
+		}
+		if(command.StartsWith(L"stopLocation", 1) && IsWatching()) {
+			StopWatching();
+		}
+			//String method;
+		AppLogDebug("GeoLocation command %S completed", method.GetPointer());
 	}
 }
 

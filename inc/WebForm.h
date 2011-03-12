@@ -31,7 +31,7 @@ private:
 	result CreateWebControl(void);
 
 	Osp::Web::Controls::Web*	__pWeb;
-	GeoLocation*                location;
+	GeoLocation*                geolocation;
 	Device*						device;
 	Accelerometer*              accel;
 	String*						__phonegapCommand;
