@@ -9,12 +9,14 @@ function onGeoLocationSuccess(position) {
 // onError Callback receives a PositionError object
 //
 function onGeoLocationError(error) {
-    alert('code: '    + error.code    + '\n' +
+    debugPrint('code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
 }
 function getCurrentPosition() {
 	var geolocation = document.getElementById('geolocation');
 	try {
+    debugPrint("PhoneGap.available: "+PhoneGap.available());
+    Geolocation.usePhoneGap();
 		geolocation.style.display = 'block';
 		navigator.geolocation.getCurrentPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
 	} catch(e) {
@@ -27,6 +29,8 @@ function toggleWatchPosition(em) {
 		em.value = "GeoLocation.StopWatching";
 		geolocation.style.display = 'block';
 		try {
+      debugPrint("PhoneGap.available: "+PhoneGap.available());
+			Geolocation.usePhoneGap();
 			watchLocationID = navigator.geolocation.watchPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
 		} catch(e) {
 			alert(e.message);
@@ -95,4 +99,11 @@ function toggleStartSensor(em) {
 	catch(e) {
 		alert(e.message);
 	}
+}
+
+function debugPrint(body) {
+    var list = document.getElementById("debuglist");
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(body));
+    list.appendChild(item);
 }

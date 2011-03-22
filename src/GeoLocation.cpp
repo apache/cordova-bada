@@ -25,16 +25,29 @@ GeoLocation::~GeoLocation() {
 void
 GeoLocation::Run(const String& command) {
 	if(!command.IsEmpty()) {
-		String method(128);
-		command.SubString(String(L"gap://Location").GetLength(), method);
-		if(command.StartsWith(L"startLocation", 1) && !IsWatching()) {
+		String args;
+		String delim(L"/");
+		command.SubString(String(L"gap://").GetLength(), args);
+		StringTokenizer strTok(args, delim);
+		String method;
+		strTok.GetNextToken(method);
+		// Getting UUID
+		for(int i = 0 ; i < 2 && strTok.HasMoreTokens() ; i++, strTok.GetNextToken(uuid));
+		AppLogDebug("Method %S, UUID: %S", method.GetPointer(), uuid.GetPointer());
+		// used to determine callback ID
+		if(method == L"com.phonegap.Geolocation.watchPosition" && !uuid.IsEmpty() && !IsWatching()) {
+			AppLogDebug("watching position...");
 			StartWatching();
 		}
-		if(command.StartsWith(L"stopLocation", 1) && IsWatching()) {
+		if(method == L"com.phonegap.Geolocation.stop" && !uuid.IsEmpty() && IsWatching()) {
+			AppLogDebug("stop watching position...");
 			StopWatching();
 		}
-			//String method;
-		AppLogDebug("GeoLocation command %S completed", method.GetPointer());
+		if(method == L"com.phonegap.Geolocation.getCurrentPosition" && !uuid.IsEmpty() && !IsWatching()) {
+			AppLogDebug("getting current position...");
+			GetLastKnownLocation();
+		}
+		AppLogDebug("GeoLocation command %S completed", command.GetPointer());
 	}
 }
 
@@ -66,14 +79,24 @@ GeoLocation::GetLastKnownLocation() {
 		double latitude = q->GetLatitude();
 		double longitude = q->GetLongitude();
 		float altitude = q->GetAltitude();
-		AppLogDebug("latitude %d longitude %d altitude %f", latitude, longitude, altitude);
+		float accuracy = q->GetHorizontalAccuracy();
+		float heading = q->GetVerticalAccuracy();
+		float speed = location->GetSpeed();
+		long long timestamp = location->GetTimestamp();
+		AppLogDebug("{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
+																									  speed, accuracy, heading, timestamp);
+		String pos;
+		pos.Format(256, L"{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
+																										  speed, accuracy, heading, timestamp);
 		String res;
-		res.Format(128, L"updateLocation(%d, %d, %f)", latitude, longitude, altitude);
+		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
 		jsResponse = pWeb->EvaluateJavascriptN(res);
 		AppLogDebug("Result: %S", jsResponse->GetPointer());
 	} else {
-		AppLogDebug("Could not get location");
-		jsResponse = pWeb->EvaluateJavascriptN(L"locationErrorCallback('Could not get location');");
+		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		String res;
+		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		jsResponse = pWeb->EvaluateJavascriptN(res);
 		AppLogDebug("Result: %S", jsResponse->GetPointer());
 	}
 	delete jsResponse;
@@ -83,20 +106,29 @@ void
 GeoLocation::OnLocationUpdated(Location& location) {
 	String* jsResponse = null;
 	if(location.GetQualifiedCoordinates() != null) {
-		AppLogDebug("GOT LOCATION");
 		const QualifiedCoordinates *q = location.GetQualifiedCoordinates();
 		double latitude = q->GetLatitude();
 		double longitude = q->GetLongitude();
 		float altitude = q->GetAltitude();
+		float accuracy = q->GetHorizontalAccuracy();
+		float heading = q->GetVerticalAccuracy();
 		float speed = location.GetSpeed();
-		AppLogDebug("latitude %d longitude %d altitude %f speed %f", latitude, longitude, altitude, speed);
+		long long timestamp = location.GetTimestamp();
+		AppLogDebug("{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
+																									  speed, accuracy, heading, timestamp);
+		String pos;
+		pos.Format(256, L"{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
+																										   speed, accuracy, heading, timestamp);
 		String res;
-		res.Format(128, L"updateLocation(%d, %d, %f, %f)", latitude, longitude, altitude, speed);
+		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
+		AppLogDebug("%S", res.GetPointer());
 		jsResponse = pWeb->EvaluateJavascriptN(res);
 		AppLogDebug("Result: %S", jsResponse->GetPointer());
 	} else {
-		AppLogDebug("Could not get location");
-		jsResponse = pWeb->EvaluateJavascriptN(L"locationErrorCallback('Could not get location');");
+		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		String res;
+		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		jsResponse = pWeb->EvaluateJavascriptN(res);
 		AppLogDebug("Result: %S", jsResponse->GetPointer());
 	}
 	delete jsResponse;

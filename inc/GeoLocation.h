@@ -12,11 +12,13 @@
 #include "FLocations.h"
 
 using namespace Osp::Locations;
+using namespace Osp::Base::Utility;
 
 class GeoLocation: public PhoneGapCommand, ILocationListener {
 private:
 	LocationProvider* locProvider;
 	bool			  watching;
+	String			  uuid;
 public:
 	GeoLocation();
 	GeoLocation(Web* pWeb, ArrayList* settings);
