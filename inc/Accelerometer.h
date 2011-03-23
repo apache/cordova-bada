@@ -12,6 +12,7 @@
 #include "FUix.h"
 
 using namespace Osp::Uix;
+using namespace Osp::Base::Utility;
 
 class Accelerometer: public PhoneGapCommand, ISensorEventListener
  {
@@ -24,10 +25,14 @@ public:
 	bool StartSensor(void);
 	bool StopSensor(void);
 	bool IsStarted(void);
+	void GetLastAcceleration(void);
 	void OnDataReceived(SensorType sensorType, SensorData& sensorData, result r);
 private:
 	SensorManager __sensorMgr;
 	bool started;
+	String uuid;
+	float x, y, z;
+	long timestamp;
 };
 
 #endif /* ACCELEROMETER_H_ */

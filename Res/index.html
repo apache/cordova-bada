@@ -6,39 +6,52 @@
 		<script type="text/javascript" src="main.js" />
 	</head>
 	<body>
-		 <div>
 		 <h2>PhoneGap test</h2>
-		 </div>
-		 <ul id="debuglist">Debug Output</ul>
-		 <p align="center">
-		 	<input onclick="getCurrentPosition()" type="submit" value="GeoLocation.GetLastKnownLocation">
-		 </p>
-		 <p align="center">
-		 	<input onclick="toggleWatchPosition(this)" type="submit" value="GeoLocation.StartWatching">
-		 </p>
-		 <p align="center">
-		 	<div id="geolocation" style="display:none;">
-		 		0,0,0
-		 	</div>
-		 </p>
-		 <p align="center">
-		 	<input onclick="toggleStartSensor(this)" type="submit" value="Accelerometer.StartSensor">
-		 </p>
-		 <p align="center">
-		 	<div id="accelerometer" style="display:none;">
-		 		x: 0, y: 0, z: 0, timestamp: 0 
-		 	</div>
-		 </p>
-		 <p align="center">
-		 	<input onclick="getSystemInfo()" type="submit" value="Device.GetSystemInfo">
-		 </p>
-		 <p align="center">
-		 	<div id="system" style="display:none;">
-		 		System Information
-		 	</div>
-		 </p>
-		 <p align="center">
-		 	<input onclick="externalBrowser()" type="submit" style="width: 100; height: 40;" value="Browser">
-		 </p>
+     <ul id="debuglist">Debug Output</ul>
+     <div>
+        <!-- Geolocation -->
+       <h3>Geolocation</h3>
+       <p align="center">
+        <input onclick="getCurrentPosition()" type="submit" value="GeoLocation.GetLastKnownLocation">
+       </p>
+       <p align="center">
+        <input onclick="toggleWatchPosition(this)" type="submit" value="GeoLocation.StartWatching">
+       </p>
+       <p align="center">
+        <div id="geolocation" style="display:none;">
+          altitude: 0,longitude: 0, altitude: 0
+        </div>
+       </p>
+     </div>
+     <!-- Accelerometer -->
+     <div>
+       <h3>Accelerometer</h3>
+       <p align="center">
+        <input onclick="getCurrentAcceleration()" type="submit" value="Accelerometer.getCurrentAcceleration()">
+       </p>
+       <p align="center">
+        <input onclick="toggleStartSensor(this)" type="submit" value="Accelerometer.watchAcceleration">
+       </p>
+       <p align="center">
+        <div id="accelerometer" style="display:none;">
+          x: 0, y: 0, z: 0, timestamp: 0 
+        </div>
+       </p>
+     </div>
+     <div>
+       <p align="center">
+        <input onclick="getSystemInfo()" type="submit" value="Device.GetSystemInfo">
+       </p>
+       <p align="center">
+        <div id="system" style="display:none;">
+          System Information
+        </div>
+       </p>
+     </div>
+     <div>
+       <p align="center">
+        <input onclick="launchExternalBrowser()" type="submit" style="width: 100; height: 40;" value="Browser">
+       </p>
+     </div>
 	</body>
 </html>

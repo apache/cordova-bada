@@ -15,6 +15,8 @@ Accelerometer::Accelerometer() {
 Accelerometer::Accelerometer(Web* pWeb, ArrayList* settings): PhoneGapCommand(pWeb, settings) {
 	__sensorMgr.Construct();
 	started = false;
+	x = y = z = 0.0;
+	timestamp = 0;
 }
 
 Accelerometer::~Accelerometer() {
@@ -23,15 +25,30 @@ Accelerometer::~Accelerometer() {
 void
 Accelerometer::Run(const String& command) {
 	if (!command.IsEmpty()) {
-		String method(128);
-		command.SubString((String(L"gap://Accelerometer")).GetLength(), method);
-		if(method.StartsWith(L"start", 1) && !IsStarted()) {
+
+		String args;
+		String delim(L"/");
+		command.SubString(String(L"gap://").GetLength(), args);
+		StringTokenizer strTok(args, delim);
+		String method;
+		strTok.GetNextToken(method);
+		// Getting UUID
+		for(int i = 0 ; i < 2 && strTok.HasMoreTokens() ; i++, strTok.GetNextToken(uuid));
+		AppLogDebug("Method %S, UUID: %S", method.GetPointer(), uuid.GetPointer());
+		// used to determine callback ID
+		if(method == L"com.phonegap.Accelerometer.watchAcceleration" && !uuid.IsEmpty() && !IsStarted()) {
+			AppLogDebug("watching acceleration...");
 			StartSensor();
 		}
-		if(method.StartsWith(L"stop", 1) && IsStarted()) {
+		if(method == L"com.phonegap.Accelerometer.clearWatch" && !uuid.IsEmpty() && IsStarted()) {
+			AppLogDebug("stop watching acceleration...");
 			StopSensor();
 		}
-		AppLogDebug("Accelerometer command %S completed", method.GetPointer());
+		if(method == L"com.phonegap.Accelerometer.getCurrentAcceleration" && !uuid.IsEmpty() && !IsStarted()) {
+			AppLogDebug("getting current acceleration...");
+			GetLastAcceleration();
+		}
+		AppLogDebug("Acceleration command %S completed", command.GetPointer());
 	} else {
 		AppLogDebug("Can't run empty command");
 	}
@@ -48,6 +65,12 @@ Accelerometer::StartSensor(void) {
 		}
 	} else {
 		AppLogException("Acceleration sensor is not available");
+		String res;
+		String* jsResponse;
+		res.Format(256, L"navigator.accelerometer.fail({message:'Acceleration sensor is not available',code:'001'});");
+		jsResponse = pWeb->EvaluateJavascriptN(res);
+		AppLogDebug("Result: %S", jsResponse->GetPointer());
+		delete jsResponse;
 		return false;
 	}
 	started = true;
@@ -74,20 +97,29 @@ Accelerometer::IsStarted() {
 }
 
 void
+Accelerometer::GetLastAcceleration() {
+	String* jsResponse;
+	String res;
+	res.Format(256, L"navigator.accelerometer.success('%S', {x:%f,y:%f,z:%f,timestamp:%d});", uuid.GetPointer(), x, y, z, timestamp);
+	jsResponse = pWeb->EvaluateJavascriptN(res);
+	AppLogDebug("Result: %S", jsResponse->GetPointer());
+	delete jsResponse;
+}
+
+void
 Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r) {
-	long timeStamp = 0;
-	float x = 0.0, y = 0.0, z = 0.0;
 	String* jsResponse;
 
-	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_TIMESTAMP, timeStamp);
+	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_TIMESTAMP, timestamp);
 	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_X, x);
 	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_Y, y);
 	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_Z, z);
 
-	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timeStamp);
+	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timestamp);
 
 	String res;
-	res.Format(1024, L"navigator.accelerometer._onAccelUpdate(%f,%f,%f);", x, y, z);
+	res.Format(256, L"navigator.accelerometer.success('%S', {x:%f,y:%f,z:%f,timestamp:%d});", uuid.GetPointer(), x, y, z, timestamp);
+	AppLogDebug("%S", res.GetPointer());
 	jsResponse = pWeb->EvaluateJavascriptN(res);
 	AppLogDebug("Result: %S", jsResponse->GetPointer());
 	delete jsResponse;

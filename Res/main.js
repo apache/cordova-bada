@@ -22,7 +22,7 @@ function getCurrentPosition() {
 	} catch(e) {
 		alert(e.message);
 	}
-}			
+}
 function toggleWatchPosition(em) {
 	var geolocation = document.getElementById('geolocation');
 	if(em.value == "GeoLocation.StartWatching") {
@@ -83,15 +83,26 @@ function stopWatchAcceleration() {
     }
 }
 
+function getCurrentAcceleration() {
+	var accelerometer = document.getElementById('accelerometer');
+	try {
+		accelerometer.style.display = 'block';
+		navigator.accelerometer.getCurrentAcceleration(onAccelerationSuccess, onAccelerationError, { frequency: 5000 });
+	} catch(e) {
+		alert(e.message);
+	}
+}
+
+
 function toggleStartSensor(em) {
 	try {
 		var accelerometer = document.getElementById('accelerometer');
-		if(em.value == "Accelerometer.StartSensor") {
-			em.value = "Accelerometer.StopSensor";
+		if(em.value == "Accelerometer.watchAcceleration") {
+			em.value = "Accelerometer.clearWatch";
 			accelerometer.style.display = 'block';
 			startWatchAcceleration();
 		} else {
-			em.value = "Accelerometer.StartSensor";
+			em.value = "Accelerometer.watchAcceleration";
 			accelerometer.style.display = 'none';
 			stopWatchAcceleration();
 		}
@@ -106,4 +117,8 @@ function debugPrint(body) {
     var item = document.createElement("li");
     item.appendChild(document.createTextNode(body));
     list.appendChild(item);
+}
+// any url gets rendered in the stock web browser
+function launchExternalBrowser() {
+  window.location = "http://www.phonegap.com";
 }

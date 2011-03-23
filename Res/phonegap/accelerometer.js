@@ -5,11 +5,11 @@
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010, IBM Corporation
  */
-function Acceleration(x, y, z) {
+function Acceleration(x, y, z, timestamp) {
   this.x = x;
   this.y = y;
   this.z = z;
-  this.timestamp = new Date().getTime();
+  this.timestamp = timestamp || new Date().getTime();
 };
 
 /**
@@ -22,11 +22,8 @@ function Accelerometer() {
      * The last known acceleration.  type=Acceleration()
      */
     this.lastAcceleration = null;
-
-    /**
-     * List of accelerometer watch timers
-     */
-    this.timers = {};
+    // Accelerometer listeners
+    this.listeners = {};
 };
 
 /**
@@ -50,8 +47,10 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
         return;
     }
 
+    var id = PhoneGap.createUUID();
+    navigator.accelerometer.listeners[id] = {success: successCallback, fail: errorCallback};
     // Get acceleration
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", []);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", [id]);
 };
 
 /**
@@ -78,23 +77,10 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
         console.log("Accelerometer Error: errorCallback is not a function");
         return;
     }
-
-    // Make sure accelerometer timeout > frequency + 10 sec
-    // @TODO Write a test for `setTimeout` and `getTimeout`
-    PhoneGap.exec(
-        function(timeout) {
-            if (timeout < (frequency + 10000)) {
-                PhoneGap.exec(null, null, "com.phonegap.Accelerometer", "setTimeout", [frequency + 10000]);
-            }
-        },
-        function(e) { }, "com.phonegap.Accelerometer", "getTimeout", []);
-
     // Start watch timer
     var id = PhoneGap.createUUID();
-    navigator.accelerometer.timers[id] = setInterval(function() {
-        PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", []);
-    }, (frequency ? frequency : 1));
-
+    navigator.accelerometer.listeners[id] = {success: successCallback, fail: errorCallback};
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "watchAcceleration", [id]);
     return id;
 };
 
@@ -106,11 +92,51 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 Accelerometer.prototype.clearWatch = function(id) {
 
     // Stop javascript timer & remove from timer list
-    if (id && navigator.accelerometer.timers[id] != undefined) {
-        clearInterval(navigator.accelerometer.timers[id]);
-        delete navigator.accelerometer.timers[id];
+    if (id && navigator.accelerometer.listeners[id] != undefined) {
+        PhoneGap.exec(null, null, "com.phonegap.Accelerometer", "clearWatch", [id]);
+        delete navigator.accelerometer.listeners[id];
     }
 };
+
+/*
+ * Native callback when watchAcceleration has a new acceleration.
+ */
+Accelerometer.prototype.success = function(id, result) {
+	try {
+        var accel = new Acceleration(result.x, result.y, result.z, result.timestamp);
+        navigator.accelerometer.lastAcceleration = accel;
+        navigator.accelerometer.listeners[id].success(accel);
+    }
+    catch (e) {
+        debugPrint("Geolocation Error: "+e.message);
+        console.log("Geolocation Error: Error calling success callback function.");
+    }
+
+    if (id == "global") {
+        delete navigator.accelerometer.listeners["global"];
+    }
+};
+
+/**
+ * Native callback when watch position has an error.
+ *
+ * @param {String} id       The ID of the watch
+ * @param {Object} result   The result containing status and message
+ */
+Accelerometer.prototype.fail = function(id, result) {
+	  try {
+        navigator.accelerometer.listeners[id].fail(result);
+    }
+    catch (e) {
+        debugPrint("Geolocation Error: Error calling error callback function: "+e.message);
+        console.log("Geolocation Error: Error calling error callback function.");
+    }
+
+    if (id == "global") {
+        delete navigator.accelerometer.listeners["global"];
+    }
+};
+
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
