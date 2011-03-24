@@ -36,7 +36,6 @@ Network::Run(const String& command) {
 		uri.SetUri(hostAddr);
 		AppLogDebug("Method %S, callbackId %S, hostAddr %S URI %S", method.GetPointer(), callbackId.GetPointer(), hostAddr.GetPointer(), uri.ToString().GetPointer());
 		if(method == L"com.phonegap.Network.isReachable") {
-			AppLogDebug("isReachable...");
 			IsReachable(uri.ToString());
 		}
 		AppLogDebug("Network command %S completed", command.GetPointer());
@@ -61,10 +60,19 @@ Network::IsReachable(const String& hostAddr) {
 }
 
 void
+Network::OnTransactionAborted (HttpSession &httpSession, HttpTransaction &httpTransaction, result r) {
+	AppLogDebug("Transaction Aborted");
+	String res;
+	res.Format(128, L"PhoneGap.callbacks['%S'].fail({code:%d,message:%s});", callbackId.GetPointer(), r, GetErrorMessage(r));
+	AppLogDebug("%S", res.GetPointer());
+	pWeb->EvaluateJavascriptN(res);
+}
+
+void
 Network::OnTransactionCompleted (HttpSession &httpSession, HttpTransaction &httpTransaction) {
 	HttpResponse* pHttpResponse = httpTransaction.GetResponse();
-	bool reachable = false;//pHttpResponse->GetStatusCode() == NET_HTTP_STATUS_OK;
-	int status = 0;
+	NetHttpStatusCode statusCode = pHttpResponse->GetStatusCode();
+	int status = 1; // Default is DATA NETWORK
 
 	// FIXME: Bada has no standard/apparent way of knowing the current network type
 	// We have to get the network type from the system info
@@ -76,28 +84,23 @@ Network::OnTransactionCompleted (HttpSession &httpSession, HttpTransaction &http
 	result r = SystemInfo::GetValue(key, networkType);
 
 	if(r == E_SUCCESS && networkType != L"NoService" && networkType != L"Emergency") {
-		AppLogDebug("Data Enabled, Network Type %S, Status Code: %d", networkType.GetPointer(), pHttpResponse->GetStatusCode());
-		status = reachable ? 1 : 0;
+		AppLogDebug("Data Enabled, Network Type %S, Status Code: %d", networkType.GetPointer(), statusCode);
+		status = 1;
 	}
 
 	Wifi::WifiManager manager;
 	if(manager.IsActivated() && manager.IsConnected()) {
 		AppLogDebug("Wifi Enabled");
-		status = reachable ?  2 : 0;
+		status = 2;
 	}
 
 	String res;
-	String* jsResponse;
 
-	res.Format(256, L"navigator.network.updateReachability({code:%d});", status);
+	res.Format(256, L"navigator.network.updateReachability({code:%d,http_code:%d});", status, statusCode);
 	AppLogDebug("%S", res.GetPointer());
-	jsResponse = pWeb->EvaluateJavascriptN(res);
-	AppLogDebug("Result: %S", jsResponse->GetPointer());
-	delete jsResponse;
+	pWeb->EvaluateJavascriptN(res);
 
-	res.Format(128, L"PhoneGap.callbacks['%S'].success({code:%d})", callbackId.GetPointer(), status);
+	res.Format(128, L"PhoneGap.callbacks['%S'].success({code:%d,http_code:%d});", callbackId.GetPointer(), status, statusCode);
 	AppLogDebug("%S", res.GetPointer());
-	jsResponse = pWeb->EvaluateJavascriptN(res);
-	AppLogDebug("Result: %S", jsResponse->GetPointer());
-	delete jsResponse;
+	pWeb->EvaluateJavascriptN(res);
 }

@@ -72,7 +72,6 @@ GeoLocation::IsWatching() {
 
 void
 GeoLocation::GetLastKnownLocation() {
-	String* jsResponse = null;
 	Location *location = locProvider->GetLastKnownLocationN();
 	if(location->GetQualifiedCoordinates() != null) {
 		const QualifiedCoordinates *q = location->GetQualifiedCoordinates();
@@ -90,21 +89,17 @@ GeoLocation::GetLastKnownLocation() {
 																										  speed, accuracy, heading, timestamp);
 		String res;
 		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
-		jsResponse = pWeb->EvaluateJavascriptN(res);
-		AppLogDebug("Result: %S", jsResponse->GetPointer());
+		pWeb->EvaluateJavascriptN(res);
 	} else {
 		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
 		String res;
 		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
-		jsResponse = pWeb->EvaluateJavascriptN(res);
-		AppLogDebug("Result: %S", jsResponse->GetPointer());
+		pWeb->EvaluateJavascriptN(res);
 	}
-	delete jsResponse;
 }
 
 void
 GeoLocation::OnLocationUpdated(Location& location) {
-	String* jsResponse = null;
 	if(location.GetQualifiedCoordinates() != null) {
 		const QualifiedCoordinates *q = location.GetQualifiedCoordinates();
 		double latitude = q->GetLatitude();
@@ -122,16 +117,13 @@ GeoLocation::OnLocationUpdated(Location& location) {
 		String res;
 		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
 		AppLogDebug("%S", res.GetPointer());
-		jsResponse = pWeb->EvaluateJavascriptN(res);
-		AppLogDebug("Result: %S", jsResponse->GetPointer());
+		pWeb->EvaluateJavascriptN(res);
 	} else {
 		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
 		String res;
 		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
-		jsResponse = pWeb->EvaluateJavascriptN(res);
-		AppLogDebug("Result: %S", jsResponse->GetPointer());
+		pWeb->EvaluateJavascriptN(res);
 	}
-	delete jsResponse;
 }
 
 void

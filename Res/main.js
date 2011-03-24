@@ -129,8 +129,9 @@ function hostIsReachable() {
   try {
     var network = document.getElementById('network');
     var callback = function(reachability) {
-      var networkState = reachability.code || reachability;
-      var states = {};
+      var networkState = reachability.code;
+      var http_code = reachability.http_code;
+      var states = [];
       states[NetworkStatus.NOT_REACHABLE]                      = 'No network connection';
       states[NetworkStatus.REACHABLE_VIA_CARRIER_DATA_NETWORK] = 'Carrier data connection';
       states[NetworkStatus.REACHABLE_VIA_WIFI_NETWORK]         = 'WiFi connection';

@@ -14,6 +14,7 @@ WebForm::WebForm(void)
 	geolocation = null;
 	device = null;
 	accel = null;
+	network = null;
 }
 
 WebForm::~WebForm(void)
@@ -98,11 +99,10 @@ bool
 WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType type) {
 	AppLogDebug("URL REQUESTED %S", url.GetPointer());
 	if(url.StartsWith("gap://", 0)) {
-		//AppLogDebug("PhoneGap command %S", url.GetPointer());
 //		__phonegapCommand = null;
 
 		__phonegapCommand = new String(url);
-		// FIXME: for some reason this does not work if we return true. Web freezes.
+		//	FIXME: for some reason this does not work if we return true. Web freezes.
 //		__pWeb->StopLoading();
 //		String* test;
 //		test = __pWeb->EvaluateJavascriptN(L"'test'");
@@ -123,7 +123,7 @@ WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType typ
 
 void
 WebForm::OnLoadingCompleted() {
-	// Setting DeviceInfo to initialize PhoneGap
+	// Setting DeviceInfo to initialize PhoneGap (should be done only once) and firing onNativeReady event
 	String* deviceInfo;
 	deviceInfo = __pWeb->EvaluateJavascriptN(L"DeviceInfo.uuid");
 	if(deviceInfo->IsEmpty()) {
@@ -134,7 +134,7 @@ WebForm::OnLoadingCompleted() {
 	}
 	delete deviceInfo;
 
-	// Tell the JS code that we've gotten this command, and we're ready for another
+	// Tell the JS code that we got this command, and we're ready for another
 	__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
 
 	// Analyzing PhoneGap command

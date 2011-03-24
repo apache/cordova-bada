@@ -28,7 +28,6 @@ Device::Run(const String& command) {
 result
 Device::SetDeviceInfo() {
 	result r = E_SUCCESS;
-	String* jsResponse = null;
 	String platformVersion;
 	String apiVersion;
 	String imei;
@@ -53,13 +52,9 @@ Device::SetDeviceInfo() {
 
     if(r == E_SUCCESS) {
     	String res;
-//    	res.Format(128, L"updateSystemInfo({PlatformName: 'Bada', PlatformVersion:'%S', APIVersion:'%S', IMEI: '%s'}, '')", platformVersion.GetPointer(),
-//																			     apiVersion.GetPointer(), imei.GetPointer());
     	res.Format(1024, L"DeviceInfo = {platform: 'bada', version:'%S', name:'n/a', gap: '0.9.4', uuid: '%S'}", platformVersion.GetPointer(), imei.GetPointer());
-    	jsResponse = pWeb->EvaluateJavascriptN(res);
     	AppLogDebug("%S", res.GetPointer());
-    	AppLogDebug("Result: %S", jsResponse->GetPointer());
-    	delete jsResponse;
+    	pWeb->EvaluateJavascriptN(res);
     }
     return r;
 

@@ -66,11 +66,8 @@ Accelerometer::StartSensor(void) {
 	} else {
 		AppLogException("Acceleration sensor is not available");
 		String res;
-		String* jsResponse;
 		res.Format(256, L"navigator.accelerometer.fail({message:'Acceleration sensor is not available',code:'001'});");
-		jsResponse = pWeb->EvaluateJavascriptN(res);
-		AppLogDebug("Result: %S", jsResponse->GetPointer());
-		delete jsResponse;
+		pWeb->EvaluateJavascriptN(res);
 		return false;
 	}
 	started = true;
@@ -98,17 +95,13 @@ Accelerometer::IsStarted() {
 
 void
 Accelerometer::GetLastAcceleration() {
-	String* jsResponse;
 	String res;
 	res.Format(256, L"navigator.accelerometer.success('%S', {x:%f,y:%f,z:%f,timestamp:%d});", uuid.GetPointer(), x, y, z, timestamp);
-	jsResponse = pWeb->EvaluateJavascriptN(res);
-	AppLogDebug("Result: %S", jsResponse->GetPointer());
-	delete jsResponse;
+	pWeb->EvaluateJavascriptN(res);
 }
 
 void
 Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r) {
-	String* jsResponse;
 
 	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_TIMESTAMP, timestamp);
 	sensorData.GetValue((SensorDataKey)ACCELERATION_DATA_KEY_X, x);
@@ -120,7 +113,5 @@ Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, res
 	String res;
 	res.Format(256, L"navigator.accelerometer.success('%S', {x:%f,y:%f,z:%f,timestamp:%d});", uuid.GetPointer(), x, y, z, timestamp);
 	AppLogDebug("%S", res.GetPointer());
-	jsResponse = pWeb->EvaluateJavascriptN(res);
-	AppLogDebug("Result: %S", jsResponse->GetPointer());
-	delete jsResponse;
+	pWeb->EvaluateJavascriptN(res);
 }

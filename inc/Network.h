@@ -25,7 +25,7 @@ public:
 	virtual void Run(const String& command);
 	bool IsReachable(const String& hostAddr, const String& callbackId);
 public:
-	virtual void 	OnTransactionAborted (HttpSession &httpSession, HttpTransaction &httpTransaction, result r) {};
+	virtual void 	OnTransactionAborted (HttpSession &httpSession, HttpTransaction &httpTransaction, result r);
 	virtual void 	OnTransactionCertVerificationRequiredN (HttpSession &httpSession, HttpTransaction &httpTransaction, Osp::Base::String *pCert) {};
 	virtual void 	OnTransactionCompleted (HttpSession &httpSession, HttpTransaction &httpTransaction);
 	virtual void 	OnTransactionHeaderCompleted (HttpSession &httpSession, HttpTransaction &httpTransaction, int headerLen, bool bAuthRequired) {};
