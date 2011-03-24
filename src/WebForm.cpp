@@ -22,6 +22,7 @@ WebForm::~WebForm(void)
 //	delete location;
 //	delete device;
 //	delete accel;
+//	delete network;
 }
 
 bool
@@ -144,6 +145,9 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Accelerometer", 0)) {
 			accel->Run(*__phonegapCommand);
 		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Network", 0)) {
+			network->Run(*__phonegapCommand);
+		}
 		delete __phonegapCommand;
 		__phonegapCommand = null;
 	}
@@ -182,6 +186,7 @@ WebForm::CreateWebControl(void)
 		geolocation = new GeoLocation(__pWeb, NULL);
 		device = new Device(__pWeb, null);
 		accel = new Accelerometer(__pWeb, null);
+		network = new Network(__pWeb, null);
 	}
 	return r;
 

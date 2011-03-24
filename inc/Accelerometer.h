@@ -9,7 +9,7 @@
 #define ACCELEROMETER_H_
 
 #include "PhoneGapCommand.h"
-#include "FUix.h"
+#include <FUix.h>
 
 using namespace Osp::Uix;
 using namespace Osp::Base::Utility;

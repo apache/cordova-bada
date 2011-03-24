@@ -12,6 +12,9 @@
             <Name>WEB_SERVICE</Name>
         </Privilege>
         <Privilege>
+            <Name>HTTP</Name>
+        </Privilege>
+        <Privilege>
             <Name>LOCATION</Name>
         </Privilege>
 	</Privileges>

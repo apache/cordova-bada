@@ -44,6 +44,15 @@ Network.prototype.isReachable = function(uri, callback, options) {
     PhoneGap.exec(callback, null, 'com.phonegap.Network', 'isReachable', [uri, isIpAddress]);
 };
 
+/**
+ * Called by the geolocation framework when the reachability status has changed.
+ * @param {Reachibility} reachability The current reachability status.
+ */
+// TODO: Callback from native code not implemented for Android
+Network.prototype.updateReachability = function(reachability) {
+    this.lastReachability = reachability;
+};
+
 PhoneGap.addConstructor(function() {
 	if (typeof navigator.network == "undefined") navigator.network = new Network();
 });

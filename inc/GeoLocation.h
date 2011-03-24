@@ -9,7 +9,7 @@
 #define GEOLOCATION_H_
 
 #include "PhoneGapCommand.h"
-#include "FLocations.h"
+#include <FLocations.h>
 
 using namespace Osp::Locations;
 using namespace Osp::Base::Utility;

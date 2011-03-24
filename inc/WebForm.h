@@ -10,6 +10,7 @@
 #include "GeoLocation.h"
 #include "Device.h"
 #include "Accelerometer.h"
+#include "Network.h"
 
 using namespace Osp::Web::Controls;
 using namespace Osp::Base;
@@ -34,6 +35,7 @@ private:
 	GeoLocation*                geolocation;
 	Device*						device;
 	Accelerometer*              accel;
+	Network*					network;
 	String*						__phonegapCommand;
 
 public:

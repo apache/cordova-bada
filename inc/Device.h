@@ -9,7 +9,7 @@
 #define DEVICE_H_
 
 #include "PhoneGapCommand.h"
-#include "FSystem.h"
+#include <FSystem.h>
 
 using namespace Osp::System;
 
