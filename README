@@ -1,1 +1,13 @@
-PhoneGap implementation for Samsung Bada. Proof of concept.
+PhoneGap implementation for Samsung Bada.
+
+Support for: Acceleration, Geolocation (native and browser), Network, Device
+
+Missing support: Camera, Contacts (Wip), Compass (Wip), File, Notifications
+
+Steps to build a PhoneGap app
+* Download Source Code
+* Import in bada C++ IDE
+* Put your HTML/CSS files in the Res/ folder
+* Build&Run!
+
+Happy Coding!
