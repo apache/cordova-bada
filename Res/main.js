@@ -1,4 +1,11 @@
+/*
+* PhoneGap Sample App
+*
+*/
+
+// Geolocation
 var watchLocationID = null;
+
 function onGeoLocationSuccess(position) {
     var element = document.getElementById('geolocation');
     element.innerHTML = 'Latitude: '  + position.coords.latitude      + '<br />' +
@@ -6,8 +13,6 @@ function onGeoLocationSuccess(position) {
                         '<hr />'      + element.innerHTML;
 }
 
-// onError Callback receives a PositionError object
-//
 function onGeoLocationError(error) {
     debugPrint('code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
@@ -50,8 +55,6 @@ function toggleWatchPosition(em) {
 // Acceleration
 var watchAccelerationID = null;
 
-// onSuccess: Get a snapshot of the current acceleration
-//
 function onAccelerationSuccess(acceleration) {
     var element = document.getElementById('accelerometer');
     element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
@@ -60,22 +63,15 @@ function onAccelerationSuccess(acceleration) {
                         'Timestamp: '      + acceleration.timestamp + '<br />';
 }
 
-// onError: Failed to get the acceleration
-//
 function onAccelerationError() {
     alert('onError!');
 }
 
 function startWatchAcceleration() {
+  var options = { frequency: 3000 };
+  watchAccelerationID = navigator.accelerometer.watchAcceleration(onAccelerationSuccess, onAccelerationError, options);
+}
 
-        // Update acceleration every 3 seconds
-        var options = { frequency: 3000 };
-
-        watchAccelerationID = navigator.accelerometer.watchAcceleration(onAccelerationSuccess, onAccelerationError, options);
-    }
-
-// Stop watching the acceleration
-//
 function stopWatchAcceleration() {
     if (watchAccelerationID) {
         navigator.accelerometer.clearWatch(watchAccelerationID);
@@ -111,14 +107,15 @@ function toggleStartSensor(em) {
 		alert(e.message);
 	}
 }
-
+// Utility Function
 function debugPrint(body) {
     var list = document.getElementById("debuglist");
     var item = document.createElement("li");
     item.appendChild(document.createTextNode(body));
     list.appendChild(item);
 }
-// any url gets rendered in the stock web browser
+
+// Stock Browser Test (Any URL request launches Stock browser) 
 function launchExternalBrowser() {
   window.location = "http://www.phonegap.com";
 }
@@ -144,11 +141,34 @@ function hostIsReachable() {
   }
 }
 
-// Logging
+// System
+function getSystemInfo() {
+  try {
+    var system = document.getElementById("system");
+    system.style.display = "block";
+    system.innerHTML = 'Device Name: '     + device.name     + '<br />' + 
+                       'Device PhoneGap: ' + device.phonegap + '<br />' + 
+                       'Device Platform: ' + device.platform + '<br />' + 
+                       'Device UUID: '     + device.uuid     + '<br />' + 
+                       'Device Version: '  + device.version  + '<br />';
+  } catch(e) {
+    debugPrint("Error Occured: "+e.message);
+  }
+  
+}
+
+// DebugConsole 
 function Log() {
   var log_statement = document.getElementById("log_statement").value;
   console.log(log_statement); 
   console.warn(log_statement); 
   console.error(log_statement); 
   console.log({test:'pouet', test2:['pouet1', 'pouet2']});
+}
+
+// Contacts
+function createContact() {
+  var myContact = navigator.service.contacts.create({displayName: "Test User"});
+  myContact.gender = "male";
+  console.log("The contact, "+myContact.displayName + ", is of the "+myContact.gender +" gender");
 }

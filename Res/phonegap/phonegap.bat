@@ -1,1 +1,1 @@
-copy /B phonegap.base.js+geolocation.js+position.js+accelerometer.js+network.js+debugconsole.js phonegap.js
+copy /B phonegap.base.js+geolocation.js+position.js+accelerometer.js+network.js+debugconsole.js+contact.js+device.js phonegap.js

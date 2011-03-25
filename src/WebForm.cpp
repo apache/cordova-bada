@@ -1,13 +1,5 @@
 #include "WebForm.h"
 
-using namespace Osp::App;
-using namespace Osp::Base;
-using namespace Osp::Ui;
-using namespace Osp::Ui::Controls;
-using namespace Osp::System;
-using namespace Osp::Graphics;
-using namespace Osp::Web::Controls;
-
 WebForm::WebForm(void)
 	:__pWeb(null), __phonegapCommand(null)
 {

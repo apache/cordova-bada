@@ -13,9 +13,14 @@
 #include "Network.h"
 #include "DebugConsole.h"
 
-using namespace Osp::Web::Controls;
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
+using namespace Osp::App;
+using namespace Osp::Ui;
+using namespace Osp::Ui::Controls;
+using namespace Osp::System;
+using namespace Osp::Graphics;
+using namespace Osp::Web::Controls;
 
 class WebForm :
 	public Osp::Ui::Controls::Form,

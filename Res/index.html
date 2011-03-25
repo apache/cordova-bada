@@ -2,73 +2,61 @@
 <html>
 	<head>
 		<title>PhoneGap Test App</title>
-		<script type="text/javascript" src="phonegap/phonegap.js" />
-		<script type="text/javascript" src="main.js" />
+		<script type="text/javascript" src="phonegap/phonegap.js"></script>
+		<script type="text/javascript" src="main.js"></script>
+    <style type="text/css">
+      div { text-align: "center"; display: "block"}
+    </style>
 	</head>
 	<body>
-		 <h2>PhoneGap test</h2>
+		 <h2>PhoneGap Sample</h2>
      <ul id="debuglist">Debug Output</ul>
+     <!-- Geolocation -->
      <div>
-        <!-- Geolocation -->
        <h3>Geolocation</h3>
-       <p align="center">
         <input onclick="getCurrentPosition()" type="submit" value="GeoLocation.GetLastKnownLocation">
-       </p>
-       <p align="center">
         <input onclick="toggleWatchPosition(this)" type="submit" value="GeoLocation.StartWatching">
-       </p>
-       <p align="center">
         <div id="geolocation" style="display:none;">
           altitude: 0,longitude: 0, altitude: 0
         </div>
-       </p>
      </div>
      <!-- Accelerometer -->
      <div>
        <h3>Accelerometer</h3>
-       <p align="center">
-        <input onclick="getCurrentAcceleration()" type="submit" value="Accelerometer.getCurrentAcceleration()">
-       </p>
-       <p align="center">
+        <input onclick="getCurrentAcceleration()" type="submit" value="Accelerometer.getCurrentAcceleration">
         <input onclick="toggleStartSensor(this)" type="submit" value="Accelerometer.watchAcceleration">
-       </p>
-       <p align="center">
         <div id="accelerometer" style="display:none;">
           x: 0, y: 0, z: 0, timestamp: 0 
         </div>
-       </p>
      </div>
+     <!-- Network -->
      <div>
-       <p align="center">
-        <input onclick="hostIsReachable('http://phonegap.com')" type="submit" value="Network.isReachable()">
-       </p>
-       <p align="center">
+        <h3>Network</h3>
+        <input onclick="hostIsReachable('http://phonegap.com')" type="submit" value="Network.isReachable">
         <div id="network" style="display:none;">
           Network Information
         </div>
-       </p>
      </div>
      <div>
+     <!-- Device -->
      <div>
-       <p align="center">
+        <h3>Device</h3>
         <input onclick="getSystemInfo()" type="submit" value="Device.GetSystemInfo">
-       </p>
-       <p align="center">
         <div id="system" style="display:none;">
           System Information
         </div>
-       </p>
      </div>
+     <!-- DebugConsole -->
      <div>
-       <p align="center">
+        <h3>DebugConsole</h3>
         <input type="text" id="log_statement" />
         <input onclick="Log()" type="submit" value="console.log">
-       </p>
      </div>
+     <!-- Contact -->
+     <h3>Contact</h3>
      <div>
-       <p align="center">
-        <input onclick="launchExternalBrowser()" type="submit" style="width: 100; height: 40;" value="Browser">
-       </p>
+        <input onclick="createContact()" type="submit" value="Contact.create">
+        <input onclick="saveContact()" type="submit" value="Contact.save">
      </div>
 	</body>
 </html>

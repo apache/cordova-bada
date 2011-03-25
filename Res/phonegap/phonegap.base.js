@@ -52,7 +52,7 @@ PhoneGap = {
  * Boolean flag indicating if the PhoneGap API is available and initialized.
  */ // TODO: Remove this, it is unused here ... -jm
 PhoneGap.available = function() {
-  return DeviceInfo.uuid != undefined;
+  return window.device.uuid != undefined;
 }
 
 /**

@@ -17,6 +17,9 @@
         <Privilege>
             <Name>LOCATION</Name>
         </Privilege>
+        <Privilege>
+        	<Name>ADDRESSBOOK</Name>
+    	</Privilege>
 	</Privileges>
 	<DeviceProfile>
 		<APIVersion>1.2</APIVersion>
