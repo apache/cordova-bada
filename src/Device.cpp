@@ -12,7 +12,7 @@ Device::Device() {
 
 }
 
-Device::Device(Web* pWeb, ArrayList* settings): PhoneGapCommand(pWeb, settings) {
+Device::Device(Web* pWeb): PhoneGapCommand(pWeb) {
 
 }
 

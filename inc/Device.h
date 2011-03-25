@@ -16,7 +16,7 @@ using namespace Osp::System;
 class Device: public PhoneGapCommand {
 public:
 	Device();
-	Device(Web* pWeb, ArrayList* settings);
+	Device(Web* pWeb);
 	virtual ~Device();
 public:
 	result SetDeviceInfo();

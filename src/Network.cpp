@@ -7,7 +7,7 @@
 
 #include "../inc/Network.h"
 
-Network::Network(Web* pWeb, ArrayList* settings) : PhoneGapCommand(pWeb, settings) {
+Network::Network(Web* pWeb) : PhoneGapCommand(pWeb) {
 }
 
 Network::~Network() {

@@ -12,7 +12,6 @@
 #include <FLocations.h>
 
 using namespace Osp::Locations;
-using namespace Osp::Base::Utility;
 
 class GeoLocation: public PhoneGapCommand, ILocationListener {
 private:
@@ -21,7 +20,7 @@ private:
 	String			  uuid;
 public:
 	GeoLocation();
-	GeoLocation(Web* pWeb, ArrayList* settings);
+	GeoLocation(Web* pWeb);
 	virtual ~GeoLocation();
 public:
 	void StartWatching();

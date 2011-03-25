@@ -14,12 +14,11 @@
 
 using namespace Osp::Net;
 using namespace Osp::Net::Http;
-using namespace Osp::Base::Utility;
 using namespace Osp::System;
 
 class Network: public PhoneGapCommand, public IHttpTransactionEventListener  {
 public:
-	Network(Web* pWeb, ArrayList* settings);
+	Network(Web* pWeb);
 	virtual ~Network();
 public:
 	virtual void Run(const String& command);

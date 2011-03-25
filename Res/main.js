@@ -143,3 +143,12 @@ function hostIsReachable() {
     debugPrint("hostIsReachable(): "+e.message);
   }
 }
+
+// Logging
+function Log() {
+  var log_statement = document.getElementById("log_statement").value;
+  console.log(log_statement); 
+  console.warn(log_statement); 
+  console.error(log_statement); 
+  console.log({test:'pouet', test2:['pouet1', 'pouet2']});
+}

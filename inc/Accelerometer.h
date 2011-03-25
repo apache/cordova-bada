@@ -12,13 +12,12 @@
 #include <FUix.h>
 
 using namespace Osp::Uix;
-using namespace Osp::Base::Utility;
 
 class Accelerometer: public PhoneGapCommand, ISensorEventListener
  {
 public:
 	Accelerometer();
-	Accelerometer(Web* pWeb, ArrayList* settings);
+	Accelerometer(Web* pWeb);
 	virtual ~Accelerometer();
 public:
 	virtual void Run(const String& command);

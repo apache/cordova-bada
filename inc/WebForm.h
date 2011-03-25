@@ -11,9 +11,11 @@
 #include "Device.h"
 #include "Accelerometer.h"
 #include "Network.h"
+#include "DebugConsole.h"
 
 using namespace Osp::Web::Controls;
 using namespace Osp::Base;
+using namespace Osp::Base::Collection;
 
 class WebForm :
 	public Osp::Ui::Controls::Form,
@@ -36,6 +38,7 @@ private:
 	Device*						device;
 	Accelerometer*              accel;
 	Network*					network;
+	DebugConsole*				console;
 	String*						__phonegapCommand;
 
 public:

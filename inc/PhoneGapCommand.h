@@ -13,16 +13,15 @@
 
 using namespace Osp::Web::Controls;
 using namespace Osp::Base;
-using namespace Osp::Base::Collection;
+using namespace Osp::Base::Utility;
 
 class PhoneGapCommand {
 public:
 	PhoneGapCommand();
-	PhoneGapCommand(Web* pWeb, ArrayList* settings);
+	PhoneGapCommand(Web* pWeb);
 	virtual ~PhoneGapCommand();
 protected:
 	Web* pWeb;
-	ArrayList* settings;
 public:
 	virtual void Run(const String& command) =0;
 };

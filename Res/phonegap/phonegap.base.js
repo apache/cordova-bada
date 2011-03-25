@@ -507,10 +507,10 @@ PhoneGap.run_command = function() {
  			var fail = args[1];
  			service = args[2] + "." + args[3];
 			args = args[4];  //array of arguments to 
- 			callbackId = service + PhoneGap.callbackId++;
-        	if (success || fail) {
-            	PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
-        	}
+      if (success || fail) {
+          callbackId = service + PhoneGap.callbackId++;
+          PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
+      }
  		} else { 
  			service = args[0]; 
  			start = 1;

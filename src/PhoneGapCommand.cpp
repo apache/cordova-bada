@@ -7,12 +7,10 @@
 
 #include "PhoneGapCommand.h"
 
-PhoneGapCommand::PhoneGapCommand() : pWeb(null), settings(null) {
+PhoneGapCommand::PhoneGapCommand() : pWeb(null) {
 }
-PhoneGapCommand::PhoneGapCommand(Web* pWeb, ArrayList* settings) : pWeb(pWeb), settings(settings) {
+PhoneGapCommand::PhoneGapCommand(Web* pWeb) : pWeb(pWeb) {
 }
 
 PhoneGapCommand::~PhoneGapCommand() {
-	delete pWeb;
-	delete settings;
 }

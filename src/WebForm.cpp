@@ -148,6 +148,9 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Network", 0)) {
 			network->Run(*__phonegapCommand);
 		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.DebugConsole", 0)) {
+			console->Run(*__phonegapCommand);
+		}
 		delete __phonegapCommand;
 		__phonegapCommand = null;
 	}
@@ -183,10 +186,11 @@ WebForm::CreateWebControl(void)
 	__pWeb->SetFocus();
 
 	if(__pWeb) {
-		geolocation = new GeoLocation(__pWeb, NULL);
-		device = new Device(__pWeb, null);
-		accel = new Accelerometer(__pWeb, null);
-		network = new Network(__pWeb, null);
+		geolocation = new GeoLocation(__pWeb);
+		device = new Device(__pWeb);
+		accel = new Accelerometer(__pWeb);
+		network = new Network(__pWeb);
+		console = new DebugConsole(__pWeb);
 	}
 	return r;
 
