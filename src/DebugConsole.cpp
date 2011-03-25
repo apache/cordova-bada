@@ -41,7 +41,7 @@ DebugConsole::Run(const String& command) {
 		strTok.GetNextToken(statement);
 		CleanUp(statement);
 		strTok.GetNextToken(logLevel);
-		AppLogDebug("method %S statement %S loglevel %S", method.GetPointer(), statement.GetPointer(), logLevel.GetPointer());
+		//AppLogDebug("method %S statement %S loglevel %S", method.GetPointer(), statement.GetPointer(), logLevel.GetPointer());
 		if(method == L"com.phonegap.DebugConsole.log") {
 			Log(statement, logLevel);
 		}

@@ -27,7 +27,7 @@ DebugConsole.prototype.setLevel = function(level) {
 DebugConsole.prototype.processMessage = function(message, maxDepth) {
 	if (maxDepth === undefined) maxDepth = 0;
     if (typeof(message) != 'object') {
-        return (this.isDeprecated ? "WARNING: debug object is deprecated, please use console object \n" + message : message);
+        return (this.isDeprecated ? "WARNING: debug object is deprecated, please use console object " + message : message);
     } else {
         /**
          * @function
@@ -45,18 +45,18 @@ DebugConsole.prototype.processMessage = function(message, maxDepth) {
             for (var i in obj) {
                 try {
                     if (typeof(obj[i]) == 'object' && depth < maxDepth) {
-                        str += i + ":\n" + indent(makeStructured(obj[i])) + "\n";
+                        str += i + ": " + indent(makeStructured(obj[i])) + "   ";
                     } else {
-                        str += i + " = " + indent(String(obj[i])).replace(/^    /, "") + "\n";
+                        str += i + " = " + indent(String(obj[i])).replace(/^    /, "") + "   ";
                     }
                 } catch(e) {
-                    str += i + " = EXCEPTION: " + e.message + "\n";
+                    str += i + " = EXCEPTION: " + e.message + "   ";
                 }
             }
             return str;
         }
         
-        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object\n" :  "") + "Object:\n" + makeStructured(message, maxDepth));
+        return ((this.isDeprecated ? "WARNING: debug object is deprecated, please use console object   " :  "") + "Object: " + makeStructured(message, maxDepth));
     }
 };
 
