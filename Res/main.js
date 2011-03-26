@@ -172,3 +172,21 @@ function createContact() {
   myContact.gender = "male";
   console.log("The contact, "+myContact.displayName + ", is of the "+myContact.gender +" gender");
 }
+
+function saveContact(contacts) {
+  var onSuccess = function() {
+    debugPrint("Save Success "+contacts);
+  };
+  var onError = function(contactError) {
+    debugPrint("Error = "+contactError.code);
+  };
+  var contact = navigator.service.contacts.create();
+  contact.displayName = "Plumber";
+  contact.nickname = "Plumber";
+
+  var name = new ContactName();
+  name.givenName = "Jane";
+  name.familtyName = "Doe";
+  contact.name = name;
+  contact.save(onSuccess, onError);
+}

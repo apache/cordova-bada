@@ -175,7 +175,7 @@ Contact.prototype.save = function(successCB, errorCB) {
 	// don't modify the original contact
 	var cloned = PhoneGap.clone(this);
 	cloned.convertDatesOut(); 
-	PhoneGap.exec(successCB, errorCB, "Contacts","save", [{"contact": cloned}]);
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","save", [{"contact": cloned}]);
 };
 
 /**
@@ -297,7 +297,7 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
 		}
 	}
 
-	PhoneGap.exec(successCB, errorCB, "Contacts","search", [{"fields":fields, "findOptions":theOptions}]);
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","search", [{"fields":fields, "findOptions":theOptions}]);
 	
 };
 /**
