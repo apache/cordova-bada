@@ -41,7 +41,7 @@ Compass::Run(const String& command) {
 		}
 		if(method == L"com.phonegap.Compass.getCurrentHeading" && !callbackId.IsEmpty() && !IsStarted()) {
 			AppLogDebug("getting current compass...");
-			GetLastAcceleration();
+			GetLastHeading();
 		}
 		AppLogDebug("Compass command %S completed", command.GetPointer());
 	} else {
@@ -89,14 +89,14 @@ Compass::IsStarted() {
 }
 
 void
-Compass::GetLastAcceleration() {
+Compass::GetLastHeading() {
 	String res;
 	res.Format(256, L"PhoneGap.callbacks['%S']({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 }
 
 void
-Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r) {
+Compass::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r) {
 
 	sensorData.GetValue((SensorDataKey)MAGNETIC_DATA_KEY_TIMESTAMP, timestamp);
 	sensorData.GetValue((SensorDataKey)MAGNETIC_DATA_KEY_X, x);

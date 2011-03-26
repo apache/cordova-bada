@@ -13,7 +13,7 @@
 
 using namespace Osp::Uix;
 
-class Compass: public PhoneGapCommand {
+class Compass: public PhoneGapCommand, ISensorEventListener {
 public:
 	Compass(Web* pWeb);
 	virtual ~Compass();
