@@ -90,7 +90,7 @@ function getCurrentAcceleration() {
 }
 
 
-function toggleStartSensor(em) {
+function toggleStartAcceleration(em) {
 	try {
 		var accelerometer = document.getElementById('accelerometer');
 		if(em.value == "Accelerometer.watchAcceleration") {
@@ -189,4 +189,72 @@ function saveContact(contacts) {
   name.familtyName = "Doe";
   contact.name = name;
   contact.save(onSuccess, onError);
+}
+
+// Compass
+var watchCompassId = null;
+
+function startWatchCompass() {
+  var options = { frequency: 3000 };
+  var onSuccess = function(compass) {
+      var element = document.getElementById('compass');
+      element.innerHTML = 'Compass X: ' + compass.x + '<br />' +
+                          'Compass Y: ' + compass.y + '<br />' +
+                          'Compass Z: ' + compass.z + '<br />' +
+                          'Timestamp: '      + compass.timestamp + '<br />';
+  };
+
+  var onFail = function() {
+      debugPrint('Compass Error!');
+  };
+  watchCompassId = navigator.compass.watchHeading(onSuccess, onFail, options);
+}
+
+function stopWatchCompass() {
+    try {
+      navigator.compass.clearWatch(watchCompassId);
+      watchCompassId= null;
+    } catch(e) {
+      debugPrint("stopWatchCompass: "+e.message);
+    }
+}
+
+function getCurrentHeading() {
+	try {
+    var compass = document.getElementById('compass');
+    var onSuccess = function(compass) {
+        var element = document.getElementById('compass');
+        element.innerHTML = 'Compass X: ' + compass.x + '<br />' +
+                            'Compass Y: ' + compass.y + '<br />' +
+                            'Compass Z: ' + compass.z + '<br />' +
+                            'Timestamp: ' + compass.timestamp + '<br />';
+    }
+
+    var onFail = function() {
+        debugPrint('Compass Error!');
+    }
+		compass.style.display = 'block';
+		navigator.compass.getCurrentHeading(onSuccess, onFail, { frequency: 5000 });
+	} catch(e) {
+		alert(e.message);
+	}
+}
+
+
+function toggleStartCompass(em) {
+	try {
+		var compass = document.getElementById('compass');
+		if(em.value == "Compass.watchHeading") {
+			em.value = "Compass.clearWatch";
+			compass.style.display = 'block';
+			startWatchCompass();
+		} else {
+			em.value = "Compass.watchHeading";
+			compass.style.display = 'none';
+			stopWatchCompass();
+		}
+	}
+	catch(e) {
+		alert(e.message);
+	}
 }

@@ -6,8 +6,7 @@ function Compass() {
     /**
      * The last known Compass position.
      */
-	this.lastHeading = null;
-  this.lastError = null;
+  this.uuid = null;
 };
 
 /**
@@ -20,12 +19,7 @@ function Compass() {
  * such as timeout.
  */
 Compass.prototype.getCurrentHeading = function(successCallback, errorCallback, options) {
-	if (this.lastHeading == null) {
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "getCurrentHeading", options);
-	}
-	else {
-    successCallback(this.lastHeading);
-	}
+  PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "getCurrentHeading", options);
 };
 
 /**
@@ -38,7 +32,9 @@ Compass.prototype.getCurrentHeading = function(successCallback, errorCallback, o
  * such as timeout and the frequency of the watch.
  */
 Compass.prototype.watchHeading= function(successCallback, errorCallback, options) {
-  PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "startHeading", args);
+  this.uuid = PhoneGap.createUUID();
+  PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "watchHeading", [this.uuid, options.frequency || 3000]);
+  return this.uuid;
 };
 
 
@@ -47,7 +43,12 @@ Compass.prototype.watchHeading= function(successCallback, errorCallback, options
  * @param {String} watchId The ID of the watch returned from #watchHeading.
  */
 Compass.prototype.clearWatch = function(watchId) {
-    PhoneGap.exec(null, null, "com.phonegap.Compass", "stopHeading");
+    if(this.uuid == watchId) {
+      PhoneGap.exec(null, null, "com.phonegap.Compass", "clearWatch", [this.uuid]);
+      this.uuid = null;
+    } else {
+      debugPrint('no clear watch');
+    }
 };
 
 PhoneGap.addConstructor(function() {

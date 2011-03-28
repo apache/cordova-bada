@@ -489,7 +489,6 @@ PhoneGap.exec = function() {
 PhoneGap.run_command = function() {
     if (!PhoneGap.available() || !PhoneGap.queue.ready)
         return;
-
     PhoneGap.queue.ready = false;
 
     var args = PhoneGap.queue.commands.shift();

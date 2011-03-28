@@ -7,6 +7,8 @@ WebForm::WebForm(void)
 	device = null;
 	accel = null;
 	network = null;
+	console = null;
+	compass = null;
 }
 
 WebForm::~WebForm(void)
@@ -143,6 +145,9 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.DebugConsole", 0)) {
 			console->Run(*__phonegapCommand);
 		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Compass", 0)) {
+			compass->Run(*__phonegapCommand);
+		}
 		delete __phonegapCommand;
 		__phonegapCommand = null;
 	}
@@ -183,6 +188,7 @@ WebForm::CreateWebControl(void)
 		accel = new Accelerometer(__pWeb);
 		network = new Network(__pWeb);
 		console = new DebugConsole(__pWeb);
+		compass = new Compass(__pWeb);
 	}
 	return r;
 

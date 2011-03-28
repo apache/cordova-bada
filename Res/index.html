@@ -24,8 +24,17 @@
      <div>
        <h3>Accelerometer</h3>
         <input onclick="getCurrentAcceleration()" type="submit" value="Accelerometer.getCurrentAcceleration">
-        <input onclick="toggleStartSensor(this)" type="submit" value="Accelerometer.watchAcceleration">
+        <input onclick="toggleStartAcceleration(this)" type="submit" value="Accelerometer.watchAcceleration">
         <div id="accelerometer" style="display:none;">
+          x: 0, y: 0, z: 0, timestamp: 0 
+        </div>
+     </div>
+     <!-- Compass -->
+     <h3>Compass</h3>
+     <div>
+        <input onclick="getCurrentHeading()" type="submit" value="Compass.getCurrentHeading">
+        <input onclick="toggleStartCompass(this)" type="submit" value="Compass.watchHeading">
+        <div id="compass" style="display:none;">
           x: 0, y: 0, z: 0, timestamp: 0 
         </div>
      </div>

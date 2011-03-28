@@ -8,13 +8,13 @@
 #include "../inc/Compass.h"
 
 Compass::Compass(Web* pWeb) : PhoneGapCommand(pWeb) {
-}
-
-Compass::~Compass() {
 	__sensorMgr.Construct();
 	started = false;
 	x = y = z = 0.0;
 	timestamp = 0;
+}
+
+Compass::~Compass() {
 }
 
 void
@@ -25,10 +25,14 @@ Compass::Run(const String& command) {
 		String delim(L"/");
 		command.SubString(String(L"gap://").GetLength(), args);
 		StringTokenizer strTok(args, delim);
+		if(strTok.GetTokenCount() < 2) {
+			AppLogDebug("Not Enough Params");
+			return;
+		}
 		String method;
 		strTok.GetNextToken(method);
 		// Getting callbackId
-		for(int i = 0 ; i < 2 && strTok.HasMoreTokens() ; i++, strTok.GetNextToken(callbackId));
+		strTok.GetNextToken(callbackId);
 		AppLogDebug("Method %S, callbackId: %S", method.GetPointer(), callbackId.GetPointer());
 		// used to determine callback ID
 		if(method == L"com.phonegap.Compass.watchHeading" && !callbackId.IsEmpty() && !IsStarted()) {
@@ -61,7 +65,7 @@ Compass::StartSensor(void) {
 	} else {
 		AppLogException("Compass sensor is not available");
 		String res;
-		res.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'Acceleration sensor is not available',code:'001'});", callbackId.GetPointer());
+		res.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'Magnetic sensor is not available',code:'001'});", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 		return false;
 	}
@@ -91,7 +95,7 @@ Compass::IsStarted() {
 void
 Compass::GetLastHeading() {
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S']({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 }
 
@@ -106,7 +110,7 @@ Compass::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r)
 	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timestamp);
 
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S']({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 }

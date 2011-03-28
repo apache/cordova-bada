@@ -12,6 +12,7 @@
 #include "Accelerometer.h"
 #include "Network.h"
 #include "DebugConsole.h"
+#include "Compass.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
@@ -44,6 +45,7 @@ private:
 	Accelerometer*              accel;
 	Network*					network;
 	DebugConsole*				console;
+	Compass*					compass;
 	String*						__phonegapCommand;
 
 public:
