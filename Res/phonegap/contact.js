@@ -99,7 +99,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
         errorCB(errorObj);
     }
     else {
-        PhoneGap.exec(successCB, errorCB, "Contacts", "remove", [{ "contact": this}]);
+        PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "remove", [{"contact": this}]);
     }
 };
 /**
@@ -115,7 +115,7 @@ Contact.prototype.display = function(successCB, errorCB, options) {
         errorCB(errorObj);
     }
     else {
-        PhoneGap.exec(successCB, errorCB, "Contacts","displayContact", [this.id, options]);
+        PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","displayContact", [this.id, options]);
     }
 };
 

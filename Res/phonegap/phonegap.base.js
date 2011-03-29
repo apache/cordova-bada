@@ -515,23 +515,24 @@ PhoneGap.run_command = function() {
  			start = 1;
  		}
         
-        var uri = [];
-    	var dict = null;
-    
+      var uri = [];
+      var query = [];
     	for (var i = start; i < args.length; i++) {
         	var arg = args[i];
         	if (arg == undefined || arg == null)
             	continue;
         	if (typeof(arg) == 'object')
-            	dict = arg;
+              for(i in arg) {
+                query.push(i + '=' + encodeURIComponent(arg[i]));
+              }
         	else
             	uri.push(encodeURIComponent(arg));
     	}
     	var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
     	var url = "gap://" + service + next + uri.join("/");
 
-    	if (dict != null) {
-        	url += "?" + encodeURIComponent(JSON.stringify(dict));
+    	if (query.length > 0) {
+        	url += "?" + encodeURIComponent(query.join("&"));
     	}
 		document.location = url;
    
