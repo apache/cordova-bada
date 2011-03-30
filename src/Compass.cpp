@@ -20,7 +20,6 @@ Compass::~Compass() {
 void
 Compass::Run(const String& command) {
 	if (!command.IsEmpty()) {
-
 		String args;
 		String delim(L"/");
 		command.SubString(String(L"gap://").GetLength(), args);

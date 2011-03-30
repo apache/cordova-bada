@@ -13,14 +13,19 @@
 using namespace Osp::Base::Collection;
 using namespace Osp::App;
 
-class Contacts: public PhoneGapCommand {
+class Contacts: public PhoneGapCommand, IAppControlEventListener {
 public:
 	Contacts(Web* pWeb);
 	virtual ~Contacts();
 public:
 	void Run(const String& command);
-	void Create();
+	void Create(const String& query);
 	void Find();
+public:
+	virtual void OnAppControlCompleted (const Osp::Base::String &appControlId, const Osp::Base::String &operationId, const Osp::Base::Collection::IList *pResultList);
+private:
+	ArrayList* GetDataList(const String& query);
+	String callbackId;
 };
 
 #endif /* CONTACTS_H_ */

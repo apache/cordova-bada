@@ -181,8 +181,11 @@ function saveContact(contacts) {
     debugPrint("Error = "+contactError.code);
   };
   var contact = navigator.service.contacts.create();
-  contact.displayName = "Plumber";
+  contact.displayName = "John";
   contact.nickname = "Plumber";
+  contact.phoneNumbers = ["6047894567"]
+  contact.emails = ["nomail@noset.com"]
+  contact.urls = ["http://www.domain.com"]
 
   var name = new ContactName();
   name.givenName = "Jane";

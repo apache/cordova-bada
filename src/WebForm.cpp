@@ -9,6 +9,7 @@ WebForm::WebForm(void)
 	network = null;
 	console = null;
 	compass = null;
+	contacts = null;
 }
 
 WebForm::~WebForm(void)
@@ -148,6 +149,9 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Compass", 0)) {
 			compass->Run(*__phonegapCommand);
 		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Contacts", 0)) {
+			contacts->Run(*__phonegapCommand);
+		}
 		delete __phonegapCommand;
 		__phonegapCommand = null;
 	}
@@ -189,6 +193,7 @@ WebForm::CreateWebControl(void)
 		network = new Network(__pWeb);
 		console = new DebugConsole(__pWeb);
 		compass = new Compass(__pWeb);
+		contacts = new Contacts(__pWeb);
 	}
 	return r;
 

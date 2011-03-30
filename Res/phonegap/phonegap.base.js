@@ -489,7 +489,6 @@ PhoneGap.exec = function() {
 PhoneGap.run_command = function() {
     if (!PhoneGap.available() || !PhoneGap.queue.ready)
         return;
-    PhoneGap.queue.ready = false;
 
     var args = PhoneGap.queue.commands.shift();
     if (PhoneGap.queue.commands.length == 0) {
@@ -521,20 +520,25 @@ PhoneGap.run_command = function() {
         	var arg = args[i];
         	if (arg == undefined || arg == null)
             	continue;
-        	if (typeof(arg) == 'object')
+        	if (typeof(arg) == 'object') {
               for(i in arg) {
-                query.push(i + '=' + encodeURIComponent(arg[i]));
+                if(typeof(arg[i]) != 'object') {
+                  query.push(encodeURIComponent(i) + '=' + encodeURIComponent(arg[i]));
+                }
               }
-        	else
+          }
+        	else {
             	uri.push(encodeURIComponent(arg));
+          }
     	}
     	var next = callbackId != null  ?  ("/" + callbackId + "/") : "/";
     	var url = "gap://" + service + next + uri.join("/");
 
     	if (query.length > 0) {
-        	url += "?" + encodeURIComponent(query.join("&"));
+        	url += "?" + query.join("&");
     	}
-		document.location = url;
+      PhoneGap.queue.ready = false;
+      document.location = url;
    
     } catch (e) {
         console.log("PhoneGapExec Error: "+e);

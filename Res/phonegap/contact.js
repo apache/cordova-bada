@@ -173,9 +173,8 @@ Contact.prototype.clone = function() {
 */
 Contact.prototype.save = function(successCB, errorCB) {
 	// don't modify the original contact
-	var cloned = PhoneGap.clone(this);
-	cloned.convertDatesOut(); 
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","save", [{"contact": cloned}]);
+  var bada_contact = {email: this.emails[0], phone: this.phoneNumbers[0], email: this.emails[0], url: this.urls[0]};
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "save", [bada_contact]);
 };
 
 /**
