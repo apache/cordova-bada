@@ -111,7 +111,7 @@ Contacts::SetPhoneNumbers(Contact& contact, const int cid) {
 			eval.Format(64, L"navigator.service.contacts.records[%d].phoneNumbers[%d].value", cid, i);
 			number = pWeb->EvaluateJavascriptN(eval);
 
-			if(type != NULL && number != NULL) {
+			if(!type->IsEmpty() && !number->IsEmpty()) {
 				if(*type == PHONENUMBER_TYPE_HOME) {
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_HOME, *number);
 					contact.AddPhoneNumber(phoneNumber);
@@ -164,7 +164,7 @@ Contacts::SetEmails(Contact& contact, const int cid) {
 			eval.Format(64, L"navigator.service.contacts.records[%d].emails[%d].value", cid, i);
 			address = pWeb->EvaluateJavascriptN(eval);
 
-			if(type != NULL && address != NULL) {
+			if(!type->IsEmpty() && !address->IsEmpty()) {
 				if(*type == EMAIL_TYPE_PERSONAL) {
 			        Email email(EMAIL_TYPE_PERSONAL, *address);
 			        contact.AddEmail(email);
