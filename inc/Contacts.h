@@ -8,24 +8,32 @@
 #ifndef CONTACTS_H_
 #define CONTACTS_H_
 
-#include <FApp.h>
+#include <FSocial.h>
 #include "PhoneGapCommand.h"
+using namespace Osp::Social;
 using namespace Osp::Base::Collection;
-using namespace Osp::App;
 
-class Contacts: public PhoneGapCommand, IAppControlEventListener {
+class Contacts: public PhoneGapCommand {
 public:
 	Contacts(Web* pWeb);
 	virtual ~Contacts();
 public:
 	void Run(const String& command);
-	void Create(const String& query);
+	void Create(const int contactId);
 	void Find();
-public:
-	virtual void OnAppControlCompleted (const Osp::Base::String &appControlId, const Osp::Base::String &operationId, const Osp::Base::Collection::IList *pResultList);
 private:
-	ArrayList* GetDataList(const String& query);
 	String callbackId;
+private:
+	void SetNickname(Contact& contact, const int cid);
+	void SetFirstName(Contact& contact, const int cid);
+	void SetLastName(Contact& contact, const int cid);
+	void SetPhoneNumbers(Contact& contact, const int cid);
+	void SetEmails(Contact& contact, const int cid);
+	void SetUrls(Contact& contact, const int cid);
+	void SetOrganization(Contact& contact, const int cid);
+	void SetBirthday(Contact& contact, const int cid);
+	void SetAddress(Contact& contact, const int cid);
+
 };
 
 #endif /* CONTACTS_H_ */

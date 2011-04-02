@@ -25,6 +25,7 @@
 * @param {ContactField[]} urls contact's web sites
 * @param {DOMString} timezone UTC time zone offset
 */
+
 var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, addresses,
     ims, organizations, revision, birthday, gender, note, photos, categories, urls, timezone) {
     this.id = id || null;
@@ -173,8 +174,8 @@ Contact.prototype.clone = function() {
 */
 Contact.prototype.save = function(successCB, errorCB) {
 	// don't modify the original contact
-  var bada_contact = {email: this.emails[0], phone: this.phoneNumbers[0], email: this.emails[0], url: this.urls[0]};
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "save", [bada_contact]);
+  var id = navigator.service.contacts.records.push(this) - 1;
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "save", [id]);
 };
 
 /**

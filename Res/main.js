@@ -173,25 +173,37 @@ function createContact() {
   console.log("The contact, "+myContact.displayName + ", is of the "+myContact.gender +" gender");
 }
 
-function saveContact(contacts) {
-  var onSuccess = function() {
-    debugPrint("Save Success "+contacts);
-  };
-  var onError = function(contactError) {
-    debugPrint("Error = "+contactError.code);
-  };
-  var contact = navigator.service.contacts.create();
-  contact.displayName = "John";
-  contact.nickname = "Plumber";
-  contact.phoneNumbers = ["6047894567"]
-  contact.emails = ["nomail@noset.com"]
-  contact.urls = ["http://www.domain.com"]
-
-  var name = new ContactName();
-  name.givenName = "Jane";
-  name.familtyName = "Doe";
-  contact.name = name;
-  contact.save(onSuccess, onError);
+function saveContact() {
+  try {
+    var onSuccess = function(result) {
+      debugPrint("Save Success: "+result.message);
+    };
+    var onError = function(contactError) {
+      debugPrint("Error = "+contactError.code);
+    };
+    var contact = navigator.service.contacts.create();
+    contact.name = new ContactName();
+    contact.name.familyName = "Doe";
+    contact.name.givenName = "John";
+    contact.displayName = "John Doe";
+    contact.nickname = "Plumber";
+    contact.phoneNumbers = [new ContactField("Mobile", "6047894567"), new ContactField("Home", "7789989674"), new ContactField("Other", "7789989673")];
+    contact.emails = [new ContactField("Personal", "nomail@noset.com"), new ContactField("Work", "nomail2@noset.com"), new ContactField("Other", "nomail3@noset.com")];
+    contact.urls = [new ContactField("work", "http://www.domain.com"), new ContactField("home", "http://www.domain2.com")];
+    contact.organization = new ContactOrganization();
+    contact.organization.name = "Nitobi Software Inc";
+    contact.organization.title = "Software Engineer";
+    contact.birthday = new Date();
+    contact.address = new ContactAddress();
+    contact.address.streetAddress = "200 Abbott Street";
+    contact.address.locality = "Vancouver";
+    contact.address.region = "BC";
+    contact.address.postalCode = "V6Z2X6";
+    contact.address.country = "Canada";
+    contact.save(onSuccess, onError);
+  } catch(e) {
+    debugPrint("Error Occured: "+e.message);
+  }
 }
 
 // Compass
