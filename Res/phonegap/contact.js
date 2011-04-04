@@ -279,26 +279,10 @@ var Contacts = function() {
 * @return array of Contacts matching search criteria
 */
 Contacts.prototype.find = function(fields, successCB, errorCB, options) {
-	var theOptions = options || null;
-	if (theOptions != null){
-		// convert updatedSince to ms
-		var value = theOptions.updatedSince
-		if (value != ''){
-			if (!value instanceof Date){
-				try {
-					value = new Date(value);
-				} catch(exception){
-					value = null;
-				}
-			}
-			if (value instanceof Date){
-				theOptions.updatedSince = value.valueOf();
-			}
-		}
-	}
-
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","search", [{"fields":fields, "findOptions":theOptions}]);
-	
+  /* fields searched are: displayName, Email, Phone Number, User Id
+   * other fields are ignored
+   */
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","find", [options.filter]);
 };
 /**
 * need to turn the array of JSON strings representing contact objects into actual objects

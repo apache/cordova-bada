@@ -63,7 +63,7 @@ void
 Network::OnTransactionAborted (HttpSession &httpSession, HttpTransaction &httpTransaction, result r) {
 	AppLogDebug("Transaction Aborted");
 	String res;
-	res.Format(128, L"PhoneGap.callbacks['%S'].fail({code:%d,message:%s});", callbackId.GetPointer(), r, GetErrorMessage(r));
+	res.Format(128, L"PhoneGap.callbacks['%S'].fail({code:%d,message:'%s'});", callbackId.GetPointer(), r, GetErrorMessage(r));
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 }

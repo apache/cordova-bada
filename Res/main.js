@@ -189,7 +189,7 @@ function saveContact() {
     contact.nickname = "Plumber";
     contact.phoneNumbers = [new ContactField("Mobile", "6047894567"), new ContactField("Home", "7789989674"), new ContactField("Other", "7789989673")];
     contact.emails = [new ContactField("Personal", "nomail@noset.com"), new ContactField("Work", "nomail2@noset.com"), new ContactField("Other", "nomail3@noset.com")];
-    contact.urls = [new ContactField("work", "http://www.domain.com"), new ContactField("home", "http://www.domain2.com")];
+    contact.urls = [new ContactField("Work", "http://www.domain.com"), new ContactField("Home", "http://www.domain2.com")];
     contact.organization = new ContactOrganization();
     contact.organization.name = "Nitobi Software Inc";
     contact.organization.title = "Software Engineer";

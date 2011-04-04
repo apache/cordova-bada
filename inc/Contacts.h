@@ -20,7 +20,7 @@ public:
 public:
 	void Run(const String& command);
 	void Create(const int contactId);
-	void Find();
+	void Find(const String& filter);
 private:
 	String callbackId;
 private:

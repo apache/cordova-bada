@@ -8,7 +8,6 @@
 #include "../inc/Contacts.h"
 
 Contacts::Contacts(Web* pWeb) : PhoneGapCommand(pWeb) {
-
 }
 
 Contacts::~Contacts() {
@@ -26,18 +25,24 @@ Contacts::Run(const String& command) {
 			return;
 		}
 		strTok.GetNextToken(callbackId);
-		String contactId;
-		strTok.GetNextToken(contactId);
-		int cid = -1;
-		result r = E_SUCCESS;
-		r = Integer::Parse(contactId, cid);
-		if(IsFailed(r)) {
-			AppLogException("Could not retrieve contact ID");
-		}
-		AppLogDebug("Method %S callbackId %S contactId %d", method.GetPointer(), callbackId.GetPointer(), cid);
+		// Saving a new contact
 		if(method == L"com.phonegap.Contacts.save" && !callbackId.IsEmpty()) {
-			AppLogDebug("Saving contact...");
+			String contactId;
+			strTok.GetNextToken(contactId);
+			int cid = -1;
+			result r = E_SUCCESS;
+			r = Integer::Parse(contactId, cid);
+			if(IsFailed(r)) {
+				AppLogException("Could not retrieve contact ID");
+			}
+			AppLogDebug("Method %S callbackId %S contactId %d", method.GetPointer(), callbackId.GetPointer(), cid);
 			Create(cid);
+		// Finding an exisiting contact by Name/Phone Number/Email
+		} else if(method == L"com.phonegap.Contacts.find" && !callbackId.IsEmpty()) {
+			String filter;
+			strTok.GetNextToken(filter);
+			AppLogDebug("Method %S callbackId %S filter %S", method.GetPointer(), callbackId.GetPointer(), filter.GetPointer());
+			Find(filter);
 		}
 
 	}
@@ -137,7 +142,7 @@ Contacts::SetPhoneNumbers(Contact& contact, const int cid) {
 
 void
 Contacts::SetEmails(Contact& contact, const int cid) {
-	// Getting phone numbers length
+	// Getting emails length
 	String* lengthStr = NULL;
 	String eval;
 	eval.Format(64, L"navigator.service.contacts.records[%d].emails.length", cid);
@@ -154,12 +159,12 @@ Contacts::SetEmails(Contact& contact, const int cid) {
 			String* type = NULL;
 			String* address = NULL;
 
-			// Getting phone number type
+			// Getting email type
 			eval.Clear();
 			eval.Format(64, L"navigator.service.contacts.records[%d].emails[%d].type", cid, i);
 			type = pWeb->EvaluateJavascriptN(eval);
 
-			// Getting phone number
+			// Getting email
 			eval.Clear();
 			eval.Format(64, L"navigator.service.contacts.records[%d].emails[%d].value", cid, i);
 			address = pWeb->EvaluateJavascriptN(eval);
@@ -184,18 +189,179 @@ Contacts::SetEmails(Contact& contact, const int cid) {
 
 void
 Contacts::SetUrls(Contact& contact, const int cid) {
+	// Getting emails length
+	String* lengthStr = NULL;
+	String eval;
+	eval.Format(64, L"navigator.service.contacts.records[%d].urls.length", cid);
+	lengthStr = pWeb->EvaluateJavascriptN(eval);
+	if(!lengthStr->IsEmpty()) {
+		int length;
+		result r = Integer::Parse(*lengthStr, length);
+		if(IsFailed(r)) {
+			AppLogException("Could not get urls length");
+			return;
+		}
+		delete lengthStr;
+		for(int i = 0 ; i < length ; i++) {
+			String* type = NULL;
+			String* address = NULL;
+
+			// Getting url type
+			eval.Clear();
+			eval.Format(64, L"navigator.service.contacts.records[%d].urls[%d].type", cid, i);
+			type = pWeb->EvaluateJavascriptN(eval);
+
+			// Getting url
+			eval.Clear();
+			eval.Format(64, L"navigator.service.contacts.records[%d].urls[%d].value", cid, i);
+			address = pWeb->EvaluateJavascriptN(eval);
+
+			if(!type->IsEmpty() && !address->IsEmpty()) {
+				if(*type == URL_TYPE_PERSONAL) {
+			        Url url(URL_TYPE_PERSONAL, *address);
+			        contact.AddUrl(url);
+				} else if(*type == URL_TYPE_WORK) {
+			        Url url(URL_TYPE_WORK, *address);
+			        contact.AddUrl(url);
+				} else if(*type == URL_TYPE_OTHER) {
+			        Url url(URL_TYPE_OTHER, *address);
+			        contact.AddUrl(url);
+				}
+			}
+			delete type;
+			delete address;
+		}
+	}
 }
 
 void
 Contacts::SetOrganization(Contact& contact, const int cid) {
+	// Setting Organization Name
+	String* value = NULL;
+	String eval;
+	eval.Format(64, L"navigator.service.contacts.records[%d].organization.name", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("Organization Name: %S", value->GetPointer());
+		contact.SetValue(CONTACT_PROPERTY_ID_COMPANY, *value);
+	}
+	delete value;
 
+	// Setting Organization Title
+	eval.Clear();
+	eval.Format(64, L"navigator.service.contacts.records[%d].organization.title", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("Organization Title: %S", value->GetPointer());
+		contact.SetValue(CONTACT_PROPERTY_ID_JOB_TITLE, *value);
+	}
+	delete value;
 }
 void
 Contacts::SetBirthday(Contact& contact, const int cid) {
+	String* value;
+	String eval;
+	int year, month, day;
+	DateTime birthday;
+
+	// Setting Year
+	eval.Format(64, L"navigator.service.contacts.records[%d].birthday.getFullYear()", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		result r = Integer::Parse(*value, year);
+		if(IsFailed(r)) {
+			AppLogException("Could not get birthday Year");
+			return;
+		}
+		AppLogDebug("Birthday Year: %S", value->GetPointer());
+	}
+	delete value;
+
+	// Setting Month
+	eval.Clear();
+	eval.Format(64, L"navigator.service.contacts.records[%d].birthday.getMonth() + 1", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		result r = Integer::Parse(*value, month);
+		if(IsFailed(r)) {
+			AppLogException("Could not get birthday Month");
+			return;
+		}
+		AppLogDebug("Birthday Month: %S", value->GetPointer());
+	}
+	delete value;
+
+	// Setting Day
+	eval.Clear();
+	eval.Format(64, L"navigator.service.contacts.records[%d].birthday.getDate()", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		result r = Integer::Parse(*value, day);
+		if(IsFailed(r)) {
+			AppLogException("Could not get birthday Day");
+			return;
+		}
+		AppLogDebug("Birthday Day: %S", value->GetPointer());
+	}
+	delete value;
+
+	birthday.SetValue(year, month, day);
+	contact.SetValue(CONTACT_PROPERTY_ID_BIRTHDAY, birthday);
+	AppLogDebug("Birthday %d/%d/%d added", year, month, day);
 }
 
 void
 Contacts::SetAddress(Contact& contact, const int cid) {
+	Address address;
+	String* value;
+	String eval;
+	// Setting Street Address
+	eval.Format(64, L"navigator.service.contacts.records[%d].address.streetAddress", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("Street Address: %S", value->GetPointer());
+		address.SetStreet(*value);
+	}
+	delete value;
+
+	// Setting City
+	eval.Format(64, L"navigator.service.contacts.records[%d].address.locality", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("City: %S", value->GetPointer());
+		address.SetCity(*value);
+	}
+	delete value;
+
+	// Setting State
+	eval.Format(64, L"navigator.service.contacts.records[%d].address.region", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("State: %S", value->GetPointer());
+		address.SetState(*value);
+	}
+	delete value;
+
+	// Setting Postal Code
+	eval.Format(64, L"navigator.service.contacts.records[%d].address.postalCode", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("Postal Code: %S", value->GetPointer());
+		address.SetPostalCode(*value);
+	}
+	delete value;
+
+	// Setting Country
+	eval.Format(64, L"navigator.service.contacts.records[%d].address.country", cid);
+	value = pWeb->EvaluateJavascriptN(eval);
+	if(!value->IsEmpty()) {
+		AppLogDebug("County: %S", value->GetPointer());
+		address.SetPostalCode(*value);
+	}
+	delete value;
+
+	contact.AddAddress(address);
+	AppLogDebug("Address Added");
 }
 
 void
@@ -223,14 +389,37 @@ Contacts::Create(const int cid) {
 
 	r = addressbook.AddContact(contact);
 
+	String eval;
+
 	if(IsFailed(r)) {
 		AppLogException("Could not add contact");
+		eval.Format(64, L"PhoneGap.callbacks['%S'].fail({message:'%s',code:%d})", callbackId.GetPointer(), r, GetErrorMessage(r));
+		pWeb->EvaluateJavascriptN(eval);
 	} else {
 		AppLogDebug("Contact Successfully Added");
+		eval.Format(64, L"PhoneGap.callbacks['%S'].success({message:'Contact added successfully'})", callbackId.GetPointer());
+		pWeb->EvaluateJavascriptN(eval);
 	}
 }
 
 void
-Contacts::Find() {
+Contacts::Find(const String& filter) {
+	Addressbook addressbook;
+	IList* pContactList = null;
+	String jsContactObj("{displayName:%S,phoneNumber:%S,email:%S}");
 
+	// Searching by Email
+	pContactList = addressbook.SearchContactsByEmailN(filter);
+	pContactList->RemoveAll(true);
+	delete pContactList;
+
+	// Searching by Name
+	pContactList = addressbook.SearchContactsByNameN(filter);
+	pContactList->RemoveAll(true);
+	delete pContactList;
+
+	// Searching by PhoneNumber
+	pContactList = addressbook.SearchContactsByPhoneNumberN(filter);
+	pContactList->RemoveAll(true);
+	delete pContactList;
 }
