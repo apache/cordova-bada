@@ -210,6 +210,12 @@ function findContact() {
   try {
     var onSuccess = function(contacts) {
       debugPrint("Found "+contacts.length+" contacts.");
+//      var contacts = navigator.service.contacts.results;
+//      var contactStr = "IDs found: "
+//      for(i in contacts) {
+//        contactStr += contacts[i].id + " ";
+//      }
+//      debugPrint(contactStr);
     };
     var onFailure = function() {
       debugPrint("ERROR");
@@ -228,8 +234,9 @@ function removeContacts() {
     var onFailure = function(result) {
       debugPrint("ERROR in Removing Contact: "+result.message);
     };
-    for(c in navigator.service.contacts.results) {
-      c.remove(onSuccess, onFailure);
+    var toRemove = navigator.service.contacts.results;
+    for(i in toRemove) {
+      toRemove[i].remove(onSuccess, onFailure);
     }
   } catch(e) {
     debugPrint("Error Occured in remove Contact: "+e.message);

@@ -255,7 +255,6 @@ Contacts.prototype._findCallback = function(contact)
 	if(contact) {
 		try {
       this.results.push(this.create(contact));
-      console.log("contact added");
 		} catch(e){
 			console.log("Error parsing contact");
 		}

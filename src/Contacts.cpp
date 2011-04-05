@@ -43,18 +43,14 @@ Contacts::Run(const String& command) {
 			strTok.GetNextToken(filter);
 			AppLogDebug("Method %S callbackId %S filter %S", method.GetPointer(), callbackId.GetPointer(), filter.GetPointer());
 			Find(filter);
+		} else if(method == L"com.phonegap.Contacts.remove" && !callbackId.IsEmpty()) {
+			String id;
+			strTok.GetNextToken(id);
+			AppLogDebug("Method %S callbackId %S ID to remove %S", method.GetPointer(), callbackId.GetPointer(), id.GetPointer());
+			Remove(id);
 		}
 
 	}
-}
-
-void
-Contacts::SetUserId(Contact& contact) {
-	// FIXME: generate random number
-	int value = 14;
-	Integer userId(value);
-	AppLogDebug("Setting User ID %S", userId.ToString().GetPointer());
-	contact.SetValue(CONTACT_PROPERTY_ID_USER_ID, userId.ToString());
 }
 
 void
@@ -397,7 +393,6 @@ Contacts::Create(const int cid) {
 	}
 
 	Contact contact;
-	SetUserId(contact);
 	SetNickname(contact, cid);
 	SetFirstName(contact, cid);
 	SetLastName(contact, cid);
@@ -428,17 +423,17 @@ void
 Contacts::UpdateSearch(Contact* pContact) const {
 	// TODO: update this add other fields too (emails, urls, phonenumbers, etc...)
 	String eval, displayName, firstName, lastName;
-	UserId userId;
+	RecordId recordId = pContact->GetRecordId();
+	LongLong test(recordId);
 	pContact->GetValue(CONTACT_PROPERTY_ID_DISPLAY_NAME, displayName);
 	pContact->GetValue(CONTACT_PROPERTY_ID_FIRST_NAME, firstName);
 	pContact->GetValue(CONTACT_PROPERTY_ID_LAST_NAME, lastName);
-	pContact->GetValue(CONTACT_PROPERTY_ID_USER_ID, userId);
 	eval.Format(256, L"navigator.service.contacts._findCallback({id:'%S', displayName:'%S', name:{firstName:'%S',lastName:'%S'}})",
-				userId.GetPointer(),
+				test.ToString().GetPointer(),
 				displayName.GetPointer(),
 				firstName.GetPointer(),
 				lastName.GetPointer());
-	AppLogDebug("%S user ID: %S", eval.GetPointer(), userId.GetPointer());
+	//AppLogDebug("%S", eval.GetPointer());
 	pWeb->EvaluateJavascriptN(eval);
 }
 
@@ -558,7 +553,7 @@ void
 Contacts::Remove(const String& idStr) {
 	String eval;
 	Addressbook addressbook;
-	long long id;
+	RecordId id;
 	result r = addressbook.Construct();
 	if(IsFailed(r))
 	{
@@ -569,11 +564,14 @@ Contacts::Remove(const String& idStr) {
 	if(IsFailed(r)) {
 		AppLogException("Could not parse ID");
 	} else {
+		AppLogDebug("Trying to remove contact with ID %S", idStr.GetPointer());
 		r = addressbook.RemoveContact(id);
 		if(IsFailed(r)) {
+			AppLogDebug("Contact Could be removed %s", GetErrorMessage(r), r);
 			eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'%s', code:%d})", callbackId.GetPointer(), GetErrorMessage(r), r);
 			pWeb->EvaluateJavascriptN(eval);
 		} else {
+			AppLogDebug("Contact %S removed", idStr.GetPointer());
 			eval.Format(128, L"PhoneGap.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
 			pWeb->EvaluateJavascriptN(eval);
 		}

@@ -25,7 +25,6 @@ public:
 private:
 	String callbackId;
 private:
-	void SetUserId(Contact& contact);
 	void SetNickname(Contact& contact, const int cid);
 	void SetFirstName(Contact& contact, const int cid);
 	void SetLastName(Contact& contact, const int cid);
