@@ -54,13 +54,13 @@ var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, ad
 */
 Contact.prototype.remove = function(successCB, errorCB) {
 	if (this.id == null) {
-        var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
-        errorCB(errorObj);
-    }
-    else {
-        PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "remove", [{"contact": this}]);
-    }
+    var errorObj = new ContactError();
+    errorObj.code = ContactError.NOT_FOUND_ERROR;
+    errorCB(errorObj);
+  }
+  else {
+      PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "remove", [this.id]);
+  }
 };
 /**
 * Bada ONLY
@@ -70,13 +70,13 @@ Contact.prototype.remove = function(successCB, errorCB) {
 */
 Contact.prototype.display = function(successCB, errorCB, options) { 
 	if (this.id == null) {
-        var errorObj = new ContactError();
-        errorObj.code = ContactError.NOT_FOUND_ERROR;
-        errorCB(errorObj);
-    }
-    else {
-        PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","displayContact", [this.id, options]);
-    }
+    var errorObj = new ContactError();
+    errorObj.code = ContactError.NOT_FOUND_ERROR;
+    errorCB(errorObj);
+  }
+  else {
+      PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","displayContact", [this.id, options]);
+  }
 };
 
 /**
@@ -255,6 +255,7 @@ Contacts.prototype._findCallback = function(contact)
 	if(contact) {
 		try {
       this.results.push(this.create(contact));
+      console.log("contact added");
 		} catch(e){
 			console.log("Error parsing contact");
 		}

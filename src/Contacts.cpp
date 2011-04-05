@@ -49,6 +49,15 @@ Contacts::Run(const String& command) {
 }
 
 void
+Contacts::SetUserId(Contact& contact) {
+	// FIXME: generate random number
+	int value = 14;
+	Integer userId(value);
+	AppLogDebug("Setting User ID %S", userId.ToString().GetPointer());
+	contact.SetValue(CONTACT_PROPERTY_ID_USER_ID, userId.ToString());
+}
+
+void
 Contacts::SetNickname(Contact& contact, const int cid) {
 	String* value = NULL;
 	String eval;
@@ -80,7 +89,7 @@ Contacts::SetLastName(Contact& contact, const int cid) {
 	String eval;
 	eval.Format(128, L"navigator.service.contacts.records[%d].name.familyName", cid);
 	value = pWeb->EvaluateJavascriptN(eval);
-	if(value->IsEmpty()) {
+	if(!value->IsEmpty()) {
 		AppLogDebug("Last Name: %S", value->GetPointer());
 		contact.SetValue(CONTACT_PROPERTY_ID_LAST_NAME, *value);
 	}
@@ -117,19 +126,24 @@ Contacts::SetPhoneNumbers(Contact& contact, const int cid) {
 			number = pWeb->EvaluateJavascriptN(eval);
 
 			if(!type->IsEmpty() && !number->IsEmpty()) {
-				if(*type == PHONENUMBER_TYPE_HOME) {
+				if(*type == "Home") {
+					AppLogDebug("Adding HOME phone number %S", number->GetPointer());
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_HOME, *number);
 					contact.AddPhoneNumber(phoneNumber);
-				} else if(*type == PHONENUMBER_TYPE_MOBILE) {
+				} else if(*type == "Mobile") {
+					AppLogDebug("Adding MOBILE phone number %S", number->GetPointer());
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_MOBILE, *number);
 					contact.AddPhoneNumber(phoneNumber);
-				} else if(*type == PHONENUMBER_TYPE_PAGER) {
+				} else if(*type == "Pager") {
+					AppLogDebug("Adding PAGER phone number %S", number->GetPointer());
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_PAGER, *number);
 					contact.AddPhoneNumber(phoneNumber);
-				} else if(*type == PHONENUMBER_TYPE_WORK) {
+				} else if(*type == "Work") {
+					AppLogDebug("Adding WORK phone number %S", number->GetPointer());
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_WORK, *number);
 					contact.AddPhoneNumber(phoneNumber);
-				} else if(*type == PHONENUMBER_TYPE_OTHER) {
+				} else if(*type == "Other") {
+					AppLogDebug("Adding OTHER phone number %S", number->GetPointer());
 					PhoneNumber phoneNumber(PHONENUMBER_TYPE_OTHER, *number);
 					contact.AddPhoneNumber(phoneNumber);
 				}
@@ -170,13 +184,16 @@ Contacts::SetEmails(Contact& contact, const int cid) {
 			address = pWeb->EvaluateJavascriptN(eval);
 
 			if(!type->IsEmpty() && !address->IsEmpty()) {
-				if(*type == EMAIL_TYPE_PERSONAL) {
+				if(*type == "Personal") {
+					AppLogDebug("Adding PERSONAL email %S", address->GetPointer());
 			        Email email(EMAIL_TYPE_PERSONAL, *address);
 			        contact.AddEmail(email);
-				} else if(*type == EMAIL_TYPE_WORK) {
+				} else if(*type == "Work") {
+					AppLogDebug("Adding WORK email %S", address->GetPointer());
 			        Email email(EMAIL_TYPE_WORK, *address);
 			        contact.AddEmail(email);
-				} else if(*type == EMAIL_TYPE_OTHER) {
+				} else if(*type == "Other") {
+					AppLogDebug("Adding OTHER email %S", address->GetPointer());
 			        Email email(EMAIL_TYPE_OTHER, *address);
 			        contact.AddEmail(email);
 				}
@@ -217,13 +234,16 @@ Contacts::SetUrls(Contact& contact, const int cid) {
 			address = pWeb->EvaluateJavascriptN(eval);
 
 			if(!type->IsEmpty() && !address->IsEmpty()) {
-				if(*type == URL_TYPE_PERSONAL) {
+				if(*type == "Personal") {
+					AppLogDebug("Adding PERSONAL URL %S", address->GetPointer());
 			        Url url(URL_TYPE_PERSONAL, *address);
 			        contact.AddUrl(url);
-				} else if(*type == URL_TYPE_WORK) {
+				} else if(*type == "Work") {
+					AppLogDebug("Adding WORK URL %S", address->GetPointer());
 			        Url url(URL_TYPE_WORK, *address);
 			        contact.AddUrl(url);
-				} else if(*type == URL_TYPE_OTHER) {
+				} else if(*type == "Other") {
+					AppLogDebug("Adding OTHER URL %S", address->GetPointer());
 			        Url url(URL_TYPE_OTHER, *address);
 			        contact.AddUrl(url);
 				}
@@ -377,6 +397,7 @@ Contacts::Create(const int cid) {
 	}
 
 	Contact contact;
+	SetUserId(contact);
 	SetNickname(contact, cid);
 	SetFirstName(contact, cid);
 	SetLastName(contact, cid);
@@ -407,13 +428,17 @@ void
 Contacts::UpdateSearch(Contact* pContact) const {
 	// TODO: update this add other fields too (emails, urls, phonenumbers, etc...)
 	String eval, displayName, firstName, lastName;
+	UserId userId;
 	pContact->GetValue(CONTACT_PROPERTY_ID_DISPLAY_NAME, displayName);
 	pContact->GetValue(CONTACT_PROPERTY_ID_FIRST_NAME, firstName);
 	pContact->GetValue(CONTACT_PROPERTY_ID_LAST_NAME, lastName);
-	eval.Format(256, L"navigator.service.contacts._findCallback({displayName:'%S', name:{firstName:'%S',lastName:'%S'}})",
+	pContact->GetValue(CONTACT_PROPERTY_ID_USER_ID, userId);
+	eval.Format(256, L"navigator.service.contacts._findCallback({id:'%S', displayName:'%S', name:{firstName:'%S',lastName:'%S'}})",
+				userId.GetPointer(),
 				displayName.GetPointer(),
 				firstName.GetPointer(),
 				lastName.GetPointer());
+	AppLogDebug("%S user ID: %S", eval.GetPointer(), userId.GetPointer());
 	pWeb->EvaluateJavascriptN(eval);
 }
 
@@ -433,6 +458,7 @@ Contacts::FindByName(const String& filter) {
 
 	// Searching by Email
 	pContactList = addressbook.SearchContactsByNameN(filter);
+	AppLogDebug("Names Matched %d", pContactList->GetCount());
 	pContactEnum = pContactList->GetEnumeratorN();
 	while (E_SUCCESS == pContactEnum->MoveNext())
 	{
@@ -459,6 +485,7 @@ Contacts::FindByEmail(const String& filter) {
 
 	// Searching by Email
 	pContactList = addressbook.SearchContactsByEmailN(filter);
+	AppLogDebug("Emails Matched %d", pContactList->GetCount());
 	pContactEnum = pContactList->GetEnumeratorN();
 	while (E_SUCCESS == pContactEnum->MoveNext())
 	{
@@ -484,6 +511,7 @@ Contacts::FindByPhoneNumber(const String& filter) {
 	}
 	// Searching by Email
 	pContactList = addressbook.SearchContactsByPhoneNumberN(filter);
+	AppLogDebug("Phone Number Matched %d", pContactList->GetCount());
 	pContactEnum = pContactList->GetEnumeratorN();
 	while (E_SUCCESS == pContactEnum->MoveNext())
 	{
@@ -523,5 +551,31 @@ Contacts::Find(const String& filter) {
 	} else {
 		eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'no contacts found',code:00})", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
+	}
+}
+
+void
+Contacts::Remove(const String& idStr) {
+	String eval;
+	Addressbook addressbook;
+	long long id;
+	result r = addressbook.Construct();
+	if(IsFailed(r))
+	{
+		AppLogException("Could not construct Address Book");
+		return;
+	}
+	r = LongLong::Parse(idStr, id);
+	if(IsFailed(r)) {
+		AppLogException("Could not parse ID");
+	} else {
+		r = addressbook.RemoveContact(id);
+		if(IsFailed(r)) {
+			eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'%s', code:%d})", callbackId.GetPointer(), GetErrorMessage(r), r);
+			pWeb->EvaluateJavascriptN(eval);
+		} else {
+			eval.Format(128, L"PhoneGap.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
+			pWeb->EvaluateJavascriptN(eval);
+		}
 	}
 }

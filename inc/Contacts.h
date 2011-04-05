@@ -21,9 +21,11 @@ public:
 	void Run(const String& command);
 	void Create(const int contactId);
 	void Find(const String& filter);
+	void Remove(const String& id);
 private:
 	String callbackId;
 private:
+	void SetUserId(Contact& contact);
 	void SetNickname(Contact& contact, const int cid);
 	void SetFirstName(Contact& contact, const int cid);
 	void SetLastName(Contact& contact, const int cid);
