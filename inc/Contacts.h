@@ -34,6 +34,11 @@ private:
 	void SetBirthday(Contact& contact, const int cid);
 	void SetAddress(Contact& contact, const int cid);
 
+	void FindByName(const String& filter);
+	void FindByEmail(const String& filter);
+	void FindByPhoneNumber(const String& filter);
+	void UpdateSearch(Contact* contact) const;
+
 };
 
 #endif /* CONTACTS_H_ */

@@ -48,47 +48,6 @@ var Contact = function(id, displayName, name, nickname, phoneNumbers, emails, ad
 };
 
 /**
-* Converts Dates to milliseconds before sending to iOS
-*/
-Contact.prototype.convertDatesOut = function()
-{
-	var dates = new Array("revision", "birthday");
-	for (var i=0; i<dates.length; i++){
-		var value = this[dates[i]];
-		if (value){
-			if (!value instanceof Date){
-				try {
-					value = new Date(value);
-				} catch(exception){
-					value = null;
-				}
-			}
-			if (value instanceof Date){
-				value = value.valueOf();
-			}
-			this[dates[i]] = value;
-		}
-	}
-	
-};
-/**
-* Converts milliseconds to JS Date when returning from iOS
-*/
-Contact.prototype.convertDatesIn = function()
-{
-	var dates = new Array("revision", "birthday");
-	for (var i=0; i<dates.length; i++){
-		var value = this[dates[i]];
-		if (value){
-			try {
-				this[dates[i]] = new Date(parseFloat(value));
-			} catch (exception){
-				console.log("exception creating date");
-			}
-		}
-	}
-};
-/**
 * Removes contact from device storage.
 * @param successCB success callback
 * @param errorCB error callback (optional)
@@ -104,8 +63,8 @@ Contact.prototype.remove = function(successCB, errorCB) {
     }
 };
 /**
-* iOS ONLY
-* displays contact via iOS UI
+* Bada ONLY
+* displays contact via Bada Contact UI
 *
 * @param errorCB error callback
 */
@@ -173,7 +132,7 @@ Contact.prototype.clone = function() {
 * @param errorCB error callback - optional
 */
 Contact.prototype.save = function(successCB, errorCB) {
-	// don't modify the original contact
+  // Read by Bada to create contact
   var id = navigator.service.contacts.records.push(this) - 1;
 	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "save", [id]);
 };
@@ -266,7 +225,8 @@ var ContactAccount = function(domain, username, userid) {
 */
 var Contacts = function() {
     this.inProgress = false;
-    this.records = new Array();
+    this.records = new Array(); // used by bada to create contacts
+    this.results = new Array(); // used by bada to update contact results
     this.resultsCallback = null;
     this.errorCallback = null;
 };
@@ -282,49 +242,23 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
   /* fields searched are: displayName, Email, Phone Number, User Id
    * other fields are ignored
    */
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","find", [options.filter]);
+	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","find",[options.filter]);
 };
-/**
-* need to turn the array of JSON strings representing contact objects into actual objects
-* @param array of JSON strings with contact data
-* @return call results callback with array of Contact objects
-*  This function is called from objective C Contacts.search() method.
-*/
-Contacts.prototype._findCallback = function(pluginResult) {
-	var contacts = new Array();
-	try {
-		for (var i=0; i<pluginResult.message.length; i++) {
-			var newContact = navigator.service.contacts.create(pluginResult.message[i]); 
-			newContact.convertDatesIn();
-			contacts.push(newContact);
-		}
-		pluginResult.message = contacts;
-	} catch(e){
-			console.log("Error parsing contacts: " +e);
-	}
-	return pluginResult;
-}
 
 /**
 * need to turn the JSON string representing contact object into actual object
 * @param JSON string with contact data
 * Call stored results function with  Contact object
-*  This function is called from objective C Contacts remove and save methods
 */
-Contacts.prototype._contactCallback = function(pluginResult)
+Contacts.prototype._findCallback = function(contact)
 {
-	var newContact = null;
-	if (pluginResult.message){
+	if(contact) {
 		try {
-			newContact = navigator.service.contacts.create(pluginResult.message);
-			newContact.convertDatesIn();
+      this.results.push(this.create(contact));
 		} catch(e){
 			console.log("Error parsing contact");
 		}
 	}
-	pluginResult.message = newContact;
-	return pluginResult;
-	
 };
 /** 
 * Need to return an error object rather than just a single error code
@@ -339,13 +273,13 @@ Contacts.prototype._errCallback = function(pluginResult)
 	pluginResult.message = errorObj;
 	return pluginResult;
 };
-// iPhone only api to create a new contact via the GUI
+// Bada only api to create a new contact via the GUI
 Contacts.prototype.newContactUI = function(successCallback) { 
-    PhoneGap.exec(successCallback, null, "Contacts","newContact", []);
+    PhoneGap.exec(successCallback, null, "com.phonegap.Contacts","newContact", []);
 };
-// iPhone only api to select a contact via the GUI
+// Bada only api to select a contact via the GUI
 Contacts.prototype.chooseContact = function(successCallback, options) {
-    PhoneGap.exec(successCallback, null, "Contacts","chooseContact", options);
+    PhoneGap.exec(successCallback, null, "com.phonegap.Contacts","chooseContact", options);
 };
 
 

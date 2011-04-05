@@ -206,6 +206,20 @@ function saveContact() {
   }
 }
 
+function findContact() {
+  try {
+    var onSuccess = function(contacts) {
+      debugPrint("Found "+contacts.length+" contacts.");
+    };
+    var onFailure = function() {
+      debugPrint("ERROR");
+    };
+    navigator.service.contacts.find(["displayName", "firstName"], onSuccess, onFailure, {filter:"John"});
+  } catch(e) {
+    debugPrint("Error Occured: "+e.message);
+  }
+}
+
 // Compass
 var watchCompassId = null;
 
