@@ -53,7 +53,7 @@ Device::SetDeviceInfo() {
     if(r == E_SUCCESS) {
     	String res;
     	res.Format(1024, L"window.device={platform:'bada',version:'%S',name:'n/a',phonegap:'0.9.4',uuid:'%S'}", platformVersion.GetPointer(), imei.GetPointer());
-    	AppLogDebug("%S", res.GetPointer());
+    	//AppLogDebug("%S", res.GetPointer());
     	pWeb->EvaluateJavascriptN(res);
     }
     return r;

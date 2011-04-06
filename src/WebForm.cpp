@@ -129,9 +129,6 @@ WebForm::OnLoadingCompleted() {
 	}
 	delete deviceInfo;
 
-	// Tell the JS code that we got this command, and we're ready for another
-	__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
-
 	// Analyzing PhoneGap command
 	if(__phonegapCommand) {
 		if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Geolocation", 0)) {
@@ -152,6 +149,8 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Contacts", 0)) {
 			contacts->Run(*__phonegapCommand);
 		}
+		// Tell the JS code that we got this command, and we're ready for another
+		__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
 		delete __phonegapCommand;
 		__phonegapCommand = null;
 	}

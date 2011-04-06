@@ -235,8 +235,9 @@ function removeContacts() {
       debugPrint("ERROR in Removing Contact: "+result.message);
     };
     var toRemove = navigator.service.contacts.results;
-    for(i in toRemove) {
-      toRemove[i].remove(onSuccess, onFailure);
+    while(toRemove.length > 0) {
+      var contact = toRemove.shift();
+      contact.remove(onSuccess, onFailure);
     }
   } catch(e) {
     debugPrint("Error Occured in remove Contact: "+e.message);

@@ -524,6 +524,9 @@ Contacts::Find(const String& filter) {
 	String* value;
 	int length = 0;
 
+	// Resetting previous results
+	pWeb->EvaluateJavascriptN(L"navigator.service.contacts.results = new Array();");
+
 	// Searching by Name
 	FindByName(filter);
 	// Searching by PhoneNumber
