@@ -14,6 +14,7 @@
 #include "DebugConsole.h"
 #include "Compass.h"
 #include "Contacts.h"
+#include "Notification.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
@@ -48,6 +49,7 @@ private:
 	DebugConsole*				console;
 	Compass*					compass;
 	Contacts*					contacts;
+	Notification*				notification;
 	String*						__phonegapCommand;
 
 public:

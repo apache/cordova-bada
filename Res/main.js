@@ -311,3 +311,34 @@ function toggleStartCompass(em) {
 		alert(e.message);
 	}
 }
+
+// Notification
+
+function notificationAlert() {
+  var complete = function(button) {
+    debugPrint("Alert button clicked: "+button);
+  }
+  try {
+    navigator.notification.alert("This is an alert Dialog",complete, "Alert Title", "OK");
+  } catch(e) {
+    debugPrint(e.message);
+  }
+}
+
+function notificationConfirm() {
+  var complete = function(button) {
+    debugPrint("Alert button clicked: "+button);
+  }
+  try {
+    navigator.notification.confirm("This is an alert Dialog",complete, "Alert Title", "OK,Cancel");
+  } catch(e) {
+    debugPrint(e.message);
+  }
+}
+
+function notifictionVibrate() {
+
+}
+function notificationBeep() {
+
+}

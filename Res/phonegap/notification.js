@@ -7,10 +7,54 @@
  * Copyright (c) 2010, IBM Corporation
  */
 
+MessageBox.MSGBOX_STYLE_NONE = 0;
+MessageBox.MSGBOX_STYLE_OK = 1;
+MessageBox.MSGBOX_STYLE_CANCEL = 2;
+MessageBox.MSGBOX_STYLE_OKCANCEL = 3;
+MessageBox.MSGBOX_STYLE_YESNO = 4;
+MessageBox.MSGBOX_STYLE_YESNOCANCEL = 5;
+MessageBox.MSGBOX_STYLE_ABORTRETRYIGNORE = 6;
+MessageBox.MSGBOX_STYLE_CANCELTRYCONTINUE = 7;
+MessageBox.MSGBOX_STYLE_RETRYCANCEL = 8;
+
 /**
  * This class provides access to notifications on the device.
  */
 function Notification() {
+  this.messageBox = new MessageBox("Test Alert", "This is an alert", "OK");
+}
+
+/*
+ * MessageBox: used by Bada to retrieve Dialog Information
+ */
+
+function MessageBox(title, message, messageBoxStyle) {
+  this.title = title;
+  this.message = message;
+  this.messageBoxStyle = messageBoxStyle;
+}
+
+labelsToBoxStyle = function(buttonLabels) {
+  if(!buttonLabels)
+    return MessageBox.MSGBOX_STYLE_NONE;
+  if(buttonLabels == "OK")
+    return MessageBox.MSGBOX_STYLE_OK;
+  if(buttonLabels == "Cancel")
+    return MessageBox.MSGBOX_STYLE_CANCEL;
+  if(buttonLabels == "OK,Cancel")
+    return MessageBox.MSGBOX_STYLE_OKCANCEL;
+  if(buttonLabels == "Yes,No")
+    return MessageBox.MSGBOX_STYLE_YESNO;
+  if(buttonLabels == "Yes,No,Cancel")
+    return MessageBox.MSGBOX_STYLE_YESNOCANCEL;
+  if(buttonLabels == "Abort,Retry,Ignore")
+    return MessageBox.MSGBOX_STYLE_ABORTRETRYIGNORE;
+  if(buttonLabels == "Cancel,Try,Continue")
+    return MessageBox.MSGBOX_STYLE_CANCELTRYCONTINUE;
+  if(buttonLabels == "Retry,Cancel")
+    return MessageBox.MSGBOX_STYLE_RETRYCANCEL;
+
+  return MessageBox.MSGBOX_STYLE_NONE;
 }
 
 /**
@@ -22,8 +66,8 @@ function Notification() {
  */
 Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
     var _title = (title || "Alert");
-    var _buttonLabel = (buttonLabel || "OK");
-    PhoneGap.exec(completeCallback, null, 'Notification', 'alert', [message, _title, _buttonLabel]);
+    this.messageBox = new MessageBox(_title, message, labelsToBoxStyle(buttonLabel));
+    PhoneGap.exec(completeCallback, null, 'com.phonegap.Notification', 'alert', []);
 };
 
 /**
@@ -36,7 +80,8 @@ Notification.prototype.alert = function(message, completeCallback, title, button
 Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) {
     var _title = (title || "Confirm");
     var _buttonLabels = (buttonLabels || "OK,Cancel");
-    return PhoneGap.exec(resultCallback, null, 'Notification', 'confirm', [message, _title, _buttonLabels]);
+    this.messageBox = new MessageBox(_title, message, labelsToBoxStyle(buttonLabels));
+    return PhoneGap.exec(resultCallback, null, 'com.phonegap.Notification', 'confirm', []);
 };
 
 /**
@@ -44,7 +89,7 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
  * @param {Integer} mills The number of milliseconds to vibrate for.
  */
 Notification.prototype.vibrate = function(mills) {
-    PhoneGap.exec(null, null, 'Notification', 'vibrate', [mills]);
+    PhoneGap.exec(null, null, 'com.phonegap.Notification', 'vibrate', [mills]);
 };
 
 /**
@@ -52,7 +97,7 @@ Notification.prototype.vibrate = function(mills) {
  * @param {Integer} count The number of beeps.
  */
 Notification.prototype.beep = function(count) {
-    PhoneGap.exec(null, null, 'Notification', 'beep', [count]);
+    PhoneGap.exec(null, null, 'com.phonegap.Notification', 'beep', [count]);
 };
 
 PhoneGap.addConstructor(function() {

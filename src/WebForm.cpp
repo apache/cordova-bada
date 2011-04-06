@@ -12,13 +12,7 @@ WebForm::WebForm(void)
 	contacts = null;
 }
 
-WebForm::~WebForm(void)
-{
-//	delete __phonegapCommand;
-//	delete location;
-//	delete device;
-//	delete accel;
-//	delete network;
+WebForm::~WebForm(void) {
 }
 
 bool
@@ -54,8 +48,15 @@ WebForm::OnTerminating(void)
 {
 	result r = E_SUCCESS;
 
-	// TODO: Add your termination code here
-
+//	delete __phonegapCommand;
+//	delete geolocation;
+//	delete device;
+//	delete accel;
+//	delete network;
+//	delete console;
+//	delete compass;
+//	delete contacts;
+//	delete notification;
 	return r;
 }
 
@@ -149,6 +150,9 @@ WebForm::OnLoadingCompleted() {
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Contacts", 0)) {
 			contacts->Run(*__phonegapCommand);
 		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Notification", 0)) {
+			notification->Run(*__phonegapCommand);
+		}
 		// Tell the JS code that we got this command, and we're ready for another
 		__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
 		delete __phonegapCommand;
@@ -193,6 +197,7 @@ WebForm::CreateWebControl(void)
 		console = new DebugConsole(__pWeb);
 		compass = new Compass(__pWeb);
 		contacts = new Contacts(__pWeb);
+		notification = new Notification(__pWeb);
 	}
 	return r;
 
