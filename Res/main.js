@@ -336,9 +336,17 @@ function notificationConfirm() {
   }
 }
 
-function notifictionVibrate() {
-
+function notificationVibrate() {
+  try {
+    navigator.notification.vibrate(3000);
+  } catch(e) {
+    debugPrint(e.message);
+  }
 }
 function notificationBeep() {
-
+  try {
+    navigator.notification.beep(4);
+  } catch(e) {
+    debugPrint(e.message);
+  }
 }

@@ -121,7 +121,7 @@ void
 WebForm::OnLoadingCompleted() {
 	// Setting DeviceInfo to initialize PhoneGap (should be done only once) and firing onNativeReady event
 	String* deviceInfo;
-	deviceInfo = __pWeb->EvaluateJavascriptN(L"DeviceInfo.uuid");
+	deviceInfo = __pWeb->EvaluateJavascriptN(L"window.device.uuid");
 	if(deviceInfo->IsEmpty()) {
 		device->SetDeviceInfo();
 		__pWeb->EvaluateJavascriptN("PhoneGap.onNativeReady.fire();");

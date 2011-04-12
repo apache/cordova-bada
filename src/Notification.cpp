@@ -24,14 +24,39 @@ Notification::Run(const String& command) {
 			AppLogException("Not enough params");
 			return;
 		}
-		strTok.GetNextToken(callbackId);
-		AppLogDebug("%S %S", method.GetPointer(), callbackId.GetPointer());
-		if((method == L"com.phonegap.Notification.alert" || method == L"com.phonegap.Notification.confirm") && !callbackId.IsEmpty()) {
-			Dialog();
-		} else if(method == L"com.phonegap.Notification.vibrate" && !callbackId.IsEmpty()) {
-			//Vibrate();
-		} else if(method == L"com.phonegap.Notification.beep" && !callbackId.IsEmpty()) {
-			//Beep();
+		if((method == L"com.phonegap.Notification.alert" || method == L"com.phonegap.Notification.confirm")) {
+			strTok.GetNextToken(callbackId);
+			AppLogDebug("%S %S", method.GetPointer(), callbackId.GetPointer());
+			if(!callbackId.IsEmpty()) {
+				Dialog();
+			}
+		} else if(method == L"com.phonegap.Notification.vibrate") {
+			long duration;
+			String durationStr;
+
+			strTok.GetNextToken(durationStr);
+			AppLogDebug("%S %S", method.GetPointer(), durationStr.GetPointer());
+			// Parsing duration
+			result r = Long::Parse(durationStr, duration);
+			if(IsFailed(r)) {
+				AppLogException("Could not parse duration");
+				return;
+			}
+			Vibrate(duration);
+		} else if(method == L"com.phonegap.Notification.beep") {
+			int count;
+			String countStr;
+
+			strTok.GetNextToken(countStr);
+			AppLogDebug("%S %S", method.GetPointer(), countStr.GetPointer());
+			// Parsing count
+			result r = Integer::Parse(countStr, count);
+			if(IsFailed(r)) {
+				AppLogException("Could not parse count");
+				return;
+			}
+
+			Beep(count);
 		}
 	}
 }
@@ -108,15 +133,27 @@ Notification::Dialog() {
 	delete message;
 	delete styleStr;
 }
-void Notification::Vibrate() {
+void Notification::Vibrate(const long milliseconds) {
+	AppLogDebug("Trying to vibrate the device for %d", milliseconds);
 	Vibrator vibrator;
 	vibrator.Construct();
-	vibrator.Start(3000,   // on period
-		           1000,  // off period
-		           2,   // repeat count
-		           60);   // vibration strength
+	vibrator.Start(milliseconds, 99);
+	Osp::Base::Runtime::Thread::Sleep(milliseconds + 1000);
 }
 
-void Notification::Beep() {
+void Notification::Beep(const int count) {
+	AppLogDebug("Trying to beep the device");
+	result r = E_SUCCESS;
 
+	TouchEffect *pTouchEffect = null;
+	pTouchEffect = new Osp::Uix::TouchEffect();
+
+	r = pTouchEffect->Construct();
+
+	if(r == E_SUCCESS) {
+		for(int i = 0 ; i < count && r == E_SUCCESS ; i++) {
+			r = pTouchEffect->Play(TOUCH_EFFECT_SOUND);
+			Osp::Base::Runtime::Thread::Sleep(1000);
+		}
+	}
 }

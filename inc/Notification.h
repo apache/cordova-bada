@@ -9,11 +9,13 @@
 #define NOTIFICATION_H_
 
 #include <FUi.h>
+#include <FUix.h>
 #include <FSystem.h>
 #include "PhoneGapCommand.h"
 using namespace Osp::System;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
+using namespace Osp::Uix;
 
 class Notification: public PhoneGapCommand {
 public:
@@ -24,8 +26,8 @@ public:
 public:
 	void Run(const String& command);
 	void Dialog();
-	void Vibrate();
-	void Beep();
+	void Vibrate(const long milliseconds);
+	void Beep(const int count);
 };
 
 #endif /* NOTIFICATION_H_ */
