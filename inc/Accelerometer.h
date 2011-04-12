@@ -29,7 +29,7 @@ public:
 private:
 	SensorManager __sensorMgr;
 	bool started;
-	String uuid;
+	String callbackId;
 	float x, y, z;
 	long timestamp;
 };

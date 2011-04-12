@@ -22,8 +22,7 @@ function Accelerometer() {
      * The last known acceleration.  type=Acceleration()
      */
     this.lastAcceleration = null;
-    // Accelerometer listeners
-    this.listeners = {};
+    this.id = null;
 };
 
 /**
@@ -47,10 +46,8 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
         return;
     }
 
-    var id = PhoneGap.createUUID();
-    navigator.accelerometer.listeners[id] = {success: successCallback, fail: errorCallback};
     // Get acceleration
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", [id]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", []);
 };
 
 /**
@@ -78,10 +75,9 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
         return;
     }
     // Start watch timer
-    var id = PhoneGap.createUUID();
-    navigator.accelerometer.listeners[id] = {success: successCallback, fail: errorCallback};
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "watchAcceleration", [id]);
-    return id;
+    this.id = PhoneGap.createUUID();
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "watchAcceleration", []);
+    return this.id;
 };
 
 /**
@@ -92,9 +88,8 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
 Accelerometer.prototype.clearWatch = function(id) {
 
     // Stop javascript timer & remove from timer list
-    if (id && navigator.accelerometer.listeners[id] != undefined) {
-        PhoneGap.exec(null, null, "com.phonegap.Accelerometer", "clearWatch", [id]);
-        delete navigator.accelerometer.listeners[id];
+    if (id == this.id) {
+        PhoneGap.exec(null, null, "com.phonegap.Accelerometer", "clearWatch", []);
     }
 };
 
@@ -116,27 +111,6 @@ Accelerometer.prototype.success = function(id, result) {
         delete navigator.accelerometer.listeners["global"];
     }
 };
-
-/**
- * Native callback when watch position has an error.
- *
- * @param {String} id       The ID of the watch
- * @param {Object} result   The result containing status and message
- */
-Accelerometer.prototype.fail = function(id, result) {
-	  try {
-        navigator.accelerometer.listeners[id].fail(result);
-    }
-    catch (e) {
-        debugPrint("Geolocation Error: Error calling error callback function: "+e.message);
-        console.log("Geolocation Error: Error calling error callback function.");
-    }
-
-    if (id == "global") {
-        delete navigator.accelerometer.listeners["global"];
-    }
-};
-
 
 PhoneGap.addConstructor(function() {
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();

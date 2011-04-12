@@ -20,7 +20,6 @@ function onGeoLocationError(error) {
 function getCurrentPosition() {
 	var geolocation = document.getElementById('geolocation');
 	try {
-    debugPrint("PhoneGap.available: "+PhoneGap.available());
     Geolocation.usePhoneGap();
 		geolocation.style.display = 'block';
 		navigator.geolocation.getCurrentPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
@@ -34,7 +33,6 @@ function toggleWatchPosition(em) {
 		em.value = "GeoLocation.StopWatching";
 		geolocation.style.display = 'block';
 		try {
-      debugPrint("PhoneGap.available: "+PhoneGap.available());
 			Geolocation.usePhoneGap();
 			watchLocationID = navigator.geolocation.watchPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
 		} catch(e) {

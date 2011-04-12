@@ -110,6 +110,5 @@ Compass::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r)
 
 	String res;
 	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
-	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 }
