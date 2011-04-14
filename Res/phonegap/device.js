@@ -21,5 +21,5 @@ function Device() {
 
 PhoneGap.addConstructor(function() {
   navigator.device = window.device = window.device || new Device();
-//  PhoneGap.onPhoneGapInfoReady.fire();
+  PhoneGap.onPhoneGapInfoReady.fire();
 });
