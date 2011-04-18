@@ -15,9 +15,7 @@ function Geolocation() {
 
     // The last known GPS position.
     this.lastPosition = null;
-
-    // Geolocation listeners
-    this.listeners = {};
+    this.id = null;
 };
 
 /**
@@ -44,17 +42,7 @@ PositionError.TIMEOUT = 3;
  * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
  */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    console.log('enter');
-    var id = "global";
-    if (navigator._geo.listeners[id]) {
-        console.log("Geolocation Error: Still waiting for previous getCurrentPosition() request.");
-        try {
-            errorCallback(new PositionError(PositionError.TIMEOUT, "Geolocation Error: Still waiting for previous getCurrentPosition() request."));
-        } catch (e) {
-        }
-        return;
-    }
-    
+    this.id = PhoneGap.createUUID();
     // default maximumAge value should be 0, and set if positive 
     var maximumAge = 0;
 
@@ -73,8 +61,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
             timeout = (options.timeout < 0) ? 0 : options.timeout;
         }
     }
-    navigator._geo.listeners[id] = {"success" : successCallback, "fail" : errorCallback };
-    PhoneGap.exec(null, errorCallback, "com.phonegap.Geolocation", "getCurrentPosition", [id, maximumAge, timeout, enableHighAccuracy]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Geolocation", "getCurrentPosition", [maximumAge, timeout, enableHighAccuracy]);
 }
 
 /**
@@ -108,54 +95,9 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
             timeout = (options.timeout < 0) ? 0 : options.timeout;
         }
     }
-    var id = PhoneGap.createUUID();
-    navigator._geo.listeners[id] = {"success" : successCallback, "fail" : errorCallback };
-    PhoneGap.exec(null, errorCallback, "com.phonegap.Geolocation", "watchPosition", [id, maximumAge, timeout, enableHighAccuracy]);
-    return id;
-};
-
-/*
- * Native callback when watch position has a new position.
- */
-Geolocation.prototype.success = function(id, result) {
-
-	var p = result.message;
-  var coords = new Coordinates(p.latitude, p.longitude, p.altitude, p.accuracy, p.heading, p.speed, p.alt_accuracy);
-  var loc = new Position(coords, p.timestamp);
-	try {
-        navigator._geo.lastPosition = loc;
-        navigator._geo.listeners[id].success(loc);
-    }
-    catch (e) {
-        debugPrint("Geolocation Error: "+e.message);
-        console.log("Geolocation Error: Error calling success callback function.");
-    }
-
-    if (id == "global") {
-        delete navigator._geo.listeners["global"];
-    }
-};
-
-/**
- * Native callback when watch position has an error.
- *
- * @param {String} id       The ID of the watch
- * @param {Object} result   The result containing status and message
- */
-Geolocation.prototype.fail = function(id, result) {
-    var code = result.status;
-    var msg = result.message;
-	  try {
-        navigator._geo.listeners[id].fail(new PositionError(code, msg));
-    }
-    catch (e) {
-        debugPrint("Geolocation Error: Error calling error callback function: "+e.message);
-        console.log("Geolocation Error: Error calling error callback function.");
-    }
-
-    if (id == "global") {
-        delete navigator._geo.listeners["global"];
-    }
+    this.id = PhoneGap.createUUID();
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Geolocation", "watchPosition", [maximumAge, timeout, enableHighAccuracy]);
+    return this.id;
 };
 
 /**
@@ -164,8 +106,8 @@ Geolocation.prototype.fail = function(id, result) {
  * @param {String} id       The ID of the watch returned from #watchPosition
  */
 Geolocation.prototype.clearWatch = function(id) {
-    PhoneGap.exec(null, null, "com.phonegap.Geolocation", "stop", [id]);
-    delete navigator._geo.listeners[id];
+    PhoneGap.exec(null, null, "com.phonegap.Geolocation", "stop", []);
+    this.id = null;
 };
 
 /**

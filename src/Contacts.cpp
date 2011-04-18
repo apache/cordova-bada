@@ -570,12 +570,13 @@ Contacts::Remove(const String& idStr) {
 		AppLogDebug("Trying to remove contact with ID %S", idStr.GetPointer());
 		r = addressbook.RemoveContact(id);
 		if(IsFailed(r)) {
-			AppLogDebug("Contact Could be removed %s", GetErrorMessage(r), r);
-			eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'%s', code:%d})", callbackId.GetPointer(), GetErrorMessage(r), r);
+			AppLogDebug("Contact Could not be removed %s %d", GetErrorMessage(r), r);
+			eval.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'%s', code:ContactError.NOT_FOUND_ERROR})",
+															 callbackId.GetPointer(), GetErrorMessage(r));
 			pWeb->EvaluateJavascriptN(eval);
 		} else {
 			AppLogDebug("Contact %S removed", idStr.GetPointer());
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
+			eval.Format(256, L"PhoneGap.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
 			pWeb->EvaluateJavascriptN(eval);
 		}
 	}

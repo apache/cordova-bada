@@ -25,25 +25,25 @@ GeoLocation::~GeoLocation() {
 void
 GeoLocation::Run(const String& command) {
 	if(!command.IsEmpty()) {
-		String args;
-		String delim(L"/");
-		command.SubString(String(L"gap://").GetLength(), args);
-		StringTokenizer strTok(args, delim);
-		String method;
-		strTok.GetNextToken(method);
-		// Getting UUID
-		for(int i = 0 ; i < 2 && strTok.HasMoreTokens() ; i++, strTok.GetNextToken(uuid));
-		AppLogDebug("Method %S, UUID: %S", method.GetPointer(), uuid.GetPointer());
+		Uri commandUri;
+		commandUri.SetUri(command);
+		String method = commandUri.GetHost();
+		StringTokenizer strTok(commandUri.GetPath(), L"/");
+		if(strTok.GetTokenCount() > 1) {
+			strTok.GetNextToken(callbackId);
+			AppLogDebug("Method %S, CallbackId: %S", method.GetPointer(), callbackId.GetPointer());
+		}
+		AppLogDebug("Method %S, Callback: %S", method.GetPointer(), callbackId.GetPointer());
 		// used to determine callback ID
-		if(method == L"com.phonegap.Geolocation.watchPosition" && !uuid.IsEmpty() && !IsWatching()) {
+		if(method == L"com.phonegap.Geolocation.watchPosition" && !callbackId.IsEmpty() && !IsWatching()) {
 			AppLogDebug("watching position...");
 			StartWatching();
 		}
-		if(method == L"com.phonegap.Geolocation.stop" && !uuid.IsEmpty() && IsWatching()) {
+		if(method == L"com.phonegap.Geolocation.stop" && IsWatching()) {
 			AppLogDebug("stop watching position...");
 			StopWatching();
 		}
-		if(method == L"com.phonegap.Geolocation.getCurrentPosition" && !uuid.IsEmpty() && !IsWatching()) {
+		if(method == L"com.phonegap.Geolocation.getCurrentPosition" && !callbackId.IsEmpty() && !IsWatching()) {
 			AppLogDebug("getting current position...");
 			GetLastKnownLocation();
 		}
@@ -82,18 +82,16 @@ GeoLocation::GetLastKnownLocation() {
 		float heading = q->GetVerticalAccuracy();
 		float speed = location->GetSpeed();
 		long long timestamp = location->GetTimestamp();
-		AppLogDebug("{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
-																									  speed, accuracy, heading, timestamp);
-		String pos;
-		pos.Format(256, L"{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
-																										  speed, accuracy, heading, timestamp);
+		AppLogDebug("new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
+		String coordinates;
+		coordinates.Format(256, L"new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
 		String res;
-		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
+		res.Format(512, L"PhoneGap.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
 		pWeb->EvaluateJavascriptN(res);
 	} else {
-		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		AppLogDebug("PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		String res;
-		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		res.Format(256, L"PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 	}
 }
@@ -109,19 +107,16 @@ GeoLocation::OnLocationUpdated(Location& location) {
 		float heading = q->GetVerticalAccuracy();
 		float speed = location.GetSpeed();
 		long long timestamp = location.GetTimestamp();
-		AppLogDebug("{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
-																									  speed, accuracy, heading, timestamp);
-		String pos;
-		pos.Format(256, L"{latitude:%d,longitude:%d,altitude:%f,speed:%f,accuracy:%f,heading:%f,timestamp:%d}", latitude, longitude, altitude,
-																										   speed, accuracy, heading, timestamp);
+		AppLogDebug("new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
+		String coordinates;
+		coordinates.Format(256, L"new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
 		String res;
-		res.Format(512, L"navigator.geolocation.success('%S', {message:%S})", uuid.GetPointer(), pos.GetPointer());
-		AppLogDebug("%S", res.GetPointer());
+		res.Format(512, L"PhoneGap.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
 		pWeb->EvaluateJavascriptN(res);
 	} else {
-		AppLogDebug("navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		AppLogDebug("PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		String res;
-		res.Format(256, L"navigator.geolocation.fail('%S', {status: '001',message:'Could not get location'});", uuid.GetPointer());
+		res.Format(256, L"PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 	}
 }

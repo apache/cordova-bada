@@ -17,7 +17,7 @@ class GeoLocation: public PhoneGapCommand, ILocationListener {
 private:
 	LocationProvider* locProvider;
 	bool			  watching;
-	String			  uuid;
+	String			  callbackId;
 public:
 	GeoLocation();
 	GeoLocation(Web* pWeb);
