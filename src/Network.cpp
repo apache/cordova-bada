@@ -100,7 +100,7 @@ Network::OnTransactionCompleted (HttpSession &httpSession, HttpTransaction &http
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 
-	res.Format(128, L"PhoneGap.callbacks['%S'].success({code:%d,http_code:%d});", callbackId.GetPointer(), status, statusCode);
+	res.Format(128, L"PhoneGap.callbacks['%S'].success(%d);", callbackId.GetPointer(), status);
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 }

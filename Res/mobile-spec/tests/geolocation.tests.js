@@ -1,4 +1,5 @@
 Tests.prototype.GeoLocationTests = function() {	
+  Geolocation.usePhoneGap();
 	module('Geolocation (navigator.geolocation)');
 	test("should exist", function() {
   		expect(1);

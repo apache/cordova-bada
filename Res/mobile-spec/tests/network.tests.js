@@ -18,9 +18,10 @@ Tests.prototype.NetworkTests = function() {
 	});
 	test("isReachable function should return one of the defined NetworkStatus constants to its success callback", function() {
 		expect(1);
-		QUnit.stop(Tests.TEST_TIMEOUT);
+		QUnit.stop(this.TEST_TIMEOUT);
 		var hostname = "http://www.google.com";
 		var win = function(code) {
+      debugPrint("Network Code" + code);
 			ok(code == NetworkStatus.NOT_REACHABLE || code == NetworkStatus.REACHABLE_VIA_CARRIER_DATA_NETWORK || code == NetworkStatus.REACHABLE_VIA_WIFI_NETWORK, "Success callback in isReachable returns one of the defined NetworkStatus constants.");
 			start();
 		};

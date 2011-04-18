@@ -35,8 +35,8 @@ WebForm::OnInitializing(void)
 		goto CATCH;
 	}
 
-	__pWeb->LoadUrl("file:///Res/index.html");
-	//__pWeb->LoadUrl("file:///Res/mobile-spec/index.html");
+	//__pWeb->LoadUrl("file:///Res/index.html");
+	__pWeb->LoadUrl("file:///Res/mobile-spec/index.html");
 
 	return r;
 
