@@ -13,8 +13,6 @@
  * @constructor
  */
 Camera = function() {
-    this.successCallback = null;
-    this.errorCallback = null;
     this.options = null;
 };
 
@@ -71,8 +69,6 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
         return;
     }
 
-    this.successCallback = successCallback;
-    this.errorCallback = errorCallback;
     this.options = options;
     var quality = 80;
     if (options.quality) {
@@ -86,7 +82,7 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
     if (typeof this.options.sourceType == "number") {
         sourceType = this.options.sourceType;
     }
-    PhoneGap.exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType]);
+    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Camera", "getPicture", [quality, destinationType, sourceType]);
 };
 
 PhoneGap.addConstructor(function() {

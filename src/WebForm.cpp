@@ -35,8 +35,8 @@ WebForm::OnInitializing(void)
 		goto CATCH;
 	}
 
-	//__pWeb->LoadUrl("file:///Res/index.html");
-	__pWeb->LoadUrl("file:///Res/mobile-spec/index.html");
+	__pWeb->LoadUrl("file:///Res/index.html");
+	//__pWeb->LoadUrl("file:///Res/mobile-spec/index.html");
 
 	return r;
 
@@ -58,6 +58,7 @@ WebForm::OnTerminating(void)
 //	delete compass;
 //	delete contacts;
 //	delete notification;
+//	delete camera;
 	return r;
 }
 
@@ -111,8 +112,6 @@ WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType typ
 		AppLogDebug("Non PhoneGap command. External URL. Launching WebBrowser");
 		LaunchBrowser(url);
 		return false;
-	} else if(url.StartsWith("file:///", 0)) {
-		return false;
 	}
 
 	return false;
@@ -153,6 +152,9 @@ WebForm::OnLoadingCompleted() {
 		}
 		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Notification", 0)) {
 			notification->Run(*__phonegapCommand);
+		}
+		else if(__phonegapCommand->StartsWith(L"gap://com.phonegap.Camera", 0)) {
+			camera->Run(*__phonegapCommand);
 		}
 		// Tell the JS code that we got this command, and we're ready for another
 		__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
@@ -199,6 +201,7 @@ WebForm::CreateWebControl(void)
 		compass = new Compass(__pWeb);
 		contacts = new Contacts(__pWeb);
 		notification = new Notification(__pWeb);
+		camera = new Kamera(__pWeb);
 	}
 	return r;
 

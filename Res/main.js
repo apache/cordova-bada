@@ -348,3 +348,21 @@ function notificationBeep() {
     debugPrint(e.message);
   }
 }
+
+// Camera
+
+function getPicture() {
+  try {
+    var successCallback = function(uri) {
+      var image = document.getElementById("picture");
+      debugPrint(uri);
+      image.src = uri;
+    }
+    var errorCallback = function(message) {
+      debugPrint("Camera Failed: "+message);
+    }
+    navigator.camera.getPicture(successCallback, errorCallback, {});
+  } catch(e) {
+    debugPring(e.message);
+  }
+}

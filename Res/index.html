@@ -2,8 +2,6 @@
 <html>
 	<head>
 		<title>PhoneGap Test App</title>
-		<script type="text/javascript" src="phonegap/phonegap.js"></script>
-		<script type="text/javascript" src="main.js"></script>
     <style type="text/css">
       div { text-align: "center"; display: "block"}
     </style>
@@ -11,6 +9,12 @@
 	<body>
 		 <h2>PhoneGap Sample</h2>
      <ul id="debuglist">Debug Output</ul>
+     <!-- Camera -->
+     <h3>Camera</h3>
+     <div>
+        <input onclick="getPicture()" type="submit" value="Camera.getPicture">
+        <img src="" id="picture" width="128">
+     </div>
      <!-- Geolocation -->
      <div>
        <h3>Geolocation</h3>
@@ -70,7 +74,7 @@
         <input onclick="removeContacts()" type="submit" value="Contact.remove">
      </div>
      <!-- Notification -->
-     <h3>Contact</h3>
+     <h3>Notification</h3>
      <div>
         <input onclick="notificationAlert()" type="submit" value="Notification.alert">
         <input onclick="notificationConfirm()" type="submit" value="Notification.confirm">
@@ -78,4 +82,6 @@
         <input onclick="notificationBeep()" type="submit" value="Notification.beep">
      </div>
 	</body>
+  <script type="text/javascript" src="phonegap/phonegap.js"></script>
+  <script type="text/javascript" src="main.js"></script>
 </html>

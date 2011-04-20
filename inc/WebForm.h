@@ -15,6 +15,7 @@
 #include "Compass.h"
 #include "Contacts.h"
 #include "Notification.h"
+#include "Kamera.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
@@ -50,6 +51,7 @@ private:
 	Compass*					compass;
 	Contacts*					contacts;
 	Notification*				notification;
+	Kamera*						camera;
 	String*						__phonegapCommand;
 
 public:
