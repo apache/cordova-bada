@@ -5,7 +5,7 @@
  * Description : 
  */
 
-#include "PhoneGap.h"
+#include "Cordova.h"
 #include "WebForm.h"
 
 using namespace Osp::App;
@@ -14,23 +14,23 @@ using namespace Osp::System;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
-PhoneGap::PhoneGap()
+Cordova::Cordova()
 {
 }
 
-PhoneGap::~PhoneGap()
+Cordova::~Cordova()
 {
 }
 
 Application*
-PhoneGap::CreateInstance(void)
+Cordova::CreateInstance(void)
 {
 	// Create the instance through the constructor.
-	return new PhoneGap();
+	return new Cordova();
 }
 
 bool
-PhoneGap::OnAppInitializing(AppRegistry& appRegistry)
+Cordova::OnAppInitializing(AppRegistry& appRegistry)
 {
 	// TODO:
 	// Initialize UI resources and application specific data.
@@ -73,7 +73,7 @@ CATCH:
 }
 
 bool
-PhoneGap::OnAppTerminating(AppRegistry& appRegistry, bool forcedTermination)
+Cordova::OnAppTerminating(AppRegistry& appRegistry, bool forcedTermination)
 {
 	// TODO:
 	// Deallocate resources allocated by this application for termination.
@@ -82,28 +82,28 @@ PhoneGap::OnAppTerminating(AppRegistry& appRegistry, bool forcedTermination)
 }
 
 void
-PhoneGap::OnForeground(void)
+Cordova::OnForeground(void)
 {
 	// TODO:
 	// Start or resume drawing when the application is moved to the foreground.
 }
 
 void
-PhoneGap::OnBackground(void)
+Cordova::OnBackground(void)
 {
 	// TODO:
 	// Stop drawing when the application is moved to the background.
 }
 
 void
-PhoneGap::OnLowMemory(void)
+Cordova::OnLowMemory(void)
 {
 	// TODO:
 	// Free unused resources or close the application.
 }
 
 void
-PhoneGap::OnBatteryLevelChanged(BatteryLevel batteryLevel)
+Cordova::OnBatteryLevelChanged(BatteryLevel batteryLevel)
 {
 	// TODO:
 	// Handle any changes in battery level here.
@@ -111,14 +111,14 @@ PhoneGap::OnBatteryLevelChanged(BatteryLevel batteryLevel)
 }
 
 void
-PhoneGap::OnScreenOn (void)
+Cordova::OnScreenOn (void)
 {
 	// TODO:
 	// Get the released resources or resume the operations that were paused or stopped in OnScreenOff().
 }
 
 void
-PhoneGap::OnScreenOff (void)
+Cordova::OnScreenOff (void)
 {
 	// TODO:
 	//  Unless there is a strong reason to do otherwise, release resources (such as 3D, media, and sensors) to allow the device to enter the sleep mode to save the battery.

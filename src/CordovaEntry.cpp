@@ -1,7 +1,7 @@
 /**
  * This file contains the bada application entry point.
  */
-#include "PhoneGap.h"
+#include "Cordova.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Collection;
@@ -27,7 +27,7 @@ OspMain(int argc, char *pArgv[])
 	for (int i = 0; i < argc; i++)
 		pArgs->Add(*(new String(pArgv[i])));
 
-	r = Osp::App::Application::Execute(PhoneGap::CreateInstance, pArgs);
+	r = Osp::App::Application::Execute(Cordova::CreateInstance, pArgs);
 	if (IsFailed(r))
 	{
 		AppLogException("Application execution failed-[%s].", GetErrorMessage(r));

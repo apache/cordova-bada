@@ -1,5 +1,5 @@
-#ifndef __PHONEGAP_H__
-#define __PHONEGAP_H__
+#ifndef __CORDOVA_H__
+#define __CORDOVA_H__
 
 
 #include <FApp.h>
@@ -11,21 +11,21 @@
  * [WebBasedApp] application must inherit from Application class
  * which provides basic features necessary to define an application.
  */
-class PhoneGap :
+class Cordova :
 	public Osp::App::Application,
 	public Osp::System::IScreenEventListener
 {
 public:
 
 	/**
-	 * [PhoneGap] application must have a factory method that creates an instance of itself.
+	 * [Cordova] application must have a factory method that creates an instance of itself.
 	 */
 	static Osp::App::Application* CreateInstance(void);
 
 
 public:
-	PhoneGap();
-	~PhoneGap();
+	Cordova();
+	~Cordova();
 
 
 public:
@@ -58,4 +58,4 @@ public:
 	void OnScreenOff (void);
 };
 
-#endif	//__PHONEGAP_H__
+#endif	//__CORDOVA_H__
