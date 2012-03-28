@@ -1,5 +1,5 @@
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -47,7 +47,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
     }
 
     // Get acceleration
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "getCurrentAcceleration", []);
+    Cordova.exec(successCallback, errorCallback, "com.cordova.Accelerometer", "getCurrentAcceleration", []);
 };
 
 /**
@@ -75,8 +75,8 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
         return;
     }
     // Start watch timer
-    this.id = PhoneGap.createUUID();
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Accelerometer", "watchAcceleration", []);
+    this.id = Cordova.createUUID();
+    Cordova.exec(successCallback, errorCallback, "com.cordova.Accelerometer", "watchAcceleration", []);
     return this.id;
 };
 
@@ -89,7 +89,7 @@ Accelerometer.prototype.clearWatch = function(id) {
 
     // Stop javascript timer & remove from timer list
     if (id == this.id) {
-        PhoneGap.exec(null, null, "com.phonegap.Accelerometer", "clearWatch", []);
+        Cordova.exec(null, null, "com.cordova.Accelerometer", "clearWatch", []);
     }
 };
 
@@ -112,6 +112,6 @@ Accelerometer.prototype.success = function(id, result) {
     }
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     if (typeof navigator.accelerometer == "undefined") navigator.accelerometer = new Accelerometer();
 });

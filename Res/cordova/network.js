@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -41,7 +41,7 @@ Network.prototype.isReachable = function(uri, callback, options) {
     if (options && options.isIpAddress) {
         isIpAddress = options.isIpAddress;
     }
-    PhoneGap.exec(callback, null, 'com.phonegap.Network', 'isReachable', [uri, isIpAddress]);
+    Cordova.exec(callback, null, 'com.cordova.Network', 'isReachable', [uri, isIpAddress]);
 };
 
 /**
@@ -53,6 +53,6 @@ Network.prototype.updateReachability = function(reachability) {
     this.lastReachability = reachability;
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
 	if (typeof navigator.network == "undefined") navigator.network = new Network();
 });

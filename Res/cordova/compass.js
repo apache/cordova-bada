@@ -19,7 +19,7 @@ function Compass() {
  * such as timeout.
  */
 Compass.prototype.getCurrentHeading = function(successCallback, errorCallback, options) {
-  PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "getCurrentHeading", options);
+  Cordova.exec(successCallback, errorCallback, "com.cordova.Compass", "getCurrentHeading", options);
 };
 
 /**
@@ -32,8 +32,8 @@ Compass.prototype.getCurrentHeading = function(successCallback, errorCallback, o
  * such as timeout and the frequency of the watch.
  */
 Compass.prototype.watchHeading= function(successCallback, errorCallback, options) {
-  this.uuid = PhoneGap.createUUID();
-  PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Compass", "watchHeading", [this.uuid, options.frequency || 3000]);
+  this.uuid = Cordova.createUUID();
+  Cordova.exec(successCallback, errorCallback, "com.cordova.Compass", "watchHeading", [this.uuid, options.frequency || 3000]);
   return this.uuid;
 };
 
@@ -44,13 +44,13 @@ Compass.prototype.watchHeading= function(successCallback, errorCallback, options
  */
 Compass.prototype.clearWatch = function(watchId) {
     if(this.uuid == watchId) {
-      PhoneGap.exec(null, null, "com.phonegap.Compass", "clearWatch", [this.uuid]);
+      Cordova.exec(null, null, "com.cordova.Compass", "clearWatch", [this.uuid]);
       this.uuid = null;
     } else {
       debugPrint('no clear watch');
     }
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     if (typeof navigator.compass == "undefined") navigator.compass = new Compass();
 });

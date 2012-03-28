@@ -1,5 +1,5 @@
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -59,7 +59,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
     errorCB(errorObj);
   }
   else {
-      PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "remove", [this.id]);
+      Cordova.exec(successCB, errorCB, "com.cordova.Contacts", "remove", [this.id]);
   }
 };
 /**
@@ -75,7 +75,7 @@ Contact.prototype.display = function(successCB, errorCB, options) {
     errorCB(errorObj);
   }
   else {
-      PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","displayContact", [this.id, options]);
+      Cordova.exec(successCB, errorCB, "com.cordova.Contacts","displayContact", [this.id, options]);
   }
 };
 
@@ -85,7 +85,7 @@ Contact.prototype.display = function(successCB, errorCB, options) {
 * @return copy of this Contact
 */
 Contact.prototype.clone = function() {
-    var clonedContact = PhoneGap.clone(this);
+    var clonedContact = Cordova.clone(this);
     clonedContact.id = null;
     // Loop through and clear out any id's in phones, emails, etc.
     if (clonedContact.phoneNumbers) {
@@ -134,7 +134,7 @@ Contact.prototype.clone = function() {
 Contact.prototype.save = function(successCB, errorCB) {
   // Read by Bada to create contact
   var id = navigator.service.contacts.records.push(this) - 1;
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts", "save", [id]);
+	Cordova.exec(successCB, errorCB, "com.cordova.Contacts", "save", [id]);
 };
 
 /**
@@ -242,7 +242,7 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
   /* fields searched are: displayName, Email, Phone Number, User Id
    * other fields are ignored
    */
-	PhoneGap.exec(successCB, errorCB, "com.phonegap.Contacts","find",[options.filter]);
+	Cordova.exec(successCB, errorCB, "com.cordova.Contacts","find",[options.filter]);
 };
 
 /**
@@ -275,11 +275,11 @@ Contacts.prototype._errCallback = function(pluginResult)
 };
 // Bada only api to create a new contact via the GUI
 Contacts.prototype.newContactUI = function(successCallback) { 
-    PhoneGap.exec(successCallback, null, "com.phonegap.Contacts","newContact", []);
+    Cordova.exec(successCallback, null, "com.cordova.Contacts","newContact", []);
 };
 // Bada only api to select a contact via the GUI
 Contacts.prototype.chooseContact = function(successCallback, options) {
-    PhoneGap.exec(successCallback, null, "com.phonegap.Contacts","chooseContact", options);
+    Cordova.exec(successCallback, null, "com.cordova.Contacts","chooseContact", options);
 };
 
 
@@ -335,7 +335,7 @@ ContactError.PERMISSION_DENIED_ERROR = 20;
 /**
  * Add the contact interface into the browser.
  */
-PhoneGap.addConstructor(function() { 
+Cordova.addConstructor(function() { 
     if(typeof navigator.service == "undefined") navigator.service = new Object();
     if(typeof navigator.service.contacts == "undefined") navigator.service.contacts = new Contacts();
 });

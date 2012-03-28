@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -67,7 +67,7 @@ labelsToBoxStyle = function(buttonLabels) {
 Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
     var _title = (title || "Alert");
     this.messageBox = new MessageBox(_title, message, labelsToBoxStyle(buttonLabel));
-    PhoneGap.exec(completeCallback, null, 'com.phonegap.Notification', 'alert', []);
+    Cordova.exec(completeCallback, null, 'com.cordova.Notification', 'alert', []);
 };
 
 /**
@@ -81,7 +81,7 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
     var _title = (title || "Confirm");
     var _buttonLabels = (buttonLabels || "OK,Cancel");
     this.messageBox = new MessageBox(_title, message, labelsToBoxStyle(buttonLabels));
-    return PhoneGap.exec(resultCallback, null, 'com.phonegap.Notification', 'confirm', []);
+    return Cordova.exec(resultCallback, null, 'com.cordova.Notification', 'confirm', []);
 };
 
 /**
@@ -89,7 +89,7 @@ Notification.prototype.confirm = function(message, resultCallback, title, button
  * @param {Integer} mills The number of milliseconds to vibrate for.
  */
 Notification.prototype.vibrate = function(mills) {
-    PhoneGap.exec(null, null, 'com.phonegap.Notification', 'vibrate', [mills]);
+    Cordova.exec(null, null, 'com.cordova.Notification', 'vibrate', [mills]);
 };
 
 /**
@@ -97,9 +97,9 @@ Notification.prototype.vibrate = function(mills) {
  * @param {Integer} count The number of beeps.
  */
 Notification.prototype.beep = function(count) {
-    PhoneGap.exec(null, null, 'com.phonegap.Notification', 'beep', [count]);
+    Cordova.exec(null, null, 'com.cordova.Notification', 'beep', [count]);
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     if (typeof navigator.notification == "undefined") navigator.notification = new Notification();
 });

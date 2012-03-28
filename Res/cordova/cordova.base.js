@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -8,18 +8,18 @@
  */
 
 /**
- * The order of events during page load and PhoneGap startup is as follows:
+ * The order of events during page load and Cordova startup is as follows:
  *
  * onDOMContentLoaded         Internal event that is received when the web page is loaded and parsed.
  * window.onload              Body onload event.
- * onNativeReady              Internal event that indicates the PhoneGap native side is ready.
- * onPhoneGapInit             Internal event that kicks off creation of all PhoneGap JavaScript objects (runs constructors).
- * onPhoneGapReady            Internal event fired when all PhoneGap JavaScript objects have been created
- * onPhoneGapInfoReady        Internal event fired when device properties are available
- * onDeviceReady              User event fired to indicate that PhoneGap is ready
+ * onNativeReady              Internal event that indicates the Cordova native side is ready.
+ * onCordovaInit             Internal event that kicks off creation of all Cordova JavaScript objects (runs constructors).
+ * onCordovaReady            Internal event fired when all Cordova JavaScript objects have been created
+ * onCordovaInfoReady        Internal event fired when device properties are available
+ * onDeviceReady              User event fired to indicate that Cordova is ready
  * onResume                   User event fired to indicate a start/resume lifecycle event
  *
- * The only PhoneGap events that user code should register for are:
+ * The only Cordova events that user code should register for are:
  *      onDeviceReady
  *      onResume
  *
@@ -35,11 +35,11 @@ function debugPrint(body) {
     list.appendChild(item);
 }
 /**
- * This represents the PhoneGap API itself, and provides a global namespace for accessing
- * information about the state of PhoneGap.
+ * This represents the Cordova API itself, and provides a global namespace for accessing
+ * information about the state of Cordova.
  * @class
  */
-PhoneGap = { 
+Cordova = { 
    queue: {
         ready: true,
         commands: [],
@@ -49,16 +49,16 @@ PhoneGap = {
 };
 
 /**
- * Boolean flag indicating if the PhoneGap API is available and initialized.
+ * Boolean flag indicating if the Cordova API is available and initialized.
  */ // TODO: Remove this, it is unused here ... -jm
-PhoneGap.available = function() {
+Cordova.available = function() {
   return window.device.uuid != undefined;
 }
 
 /**
  * Custom pub-sub channel that can have functions subscribed to it
  */
-PhoneGap.Channel = function(type)
+Cordova.Channel = function(type)
 {
     this.type = type;
     this.handlers = {};
@@ -74,12 +74,12 @@ PhoneGap.Channel = function(type)
  * and a guid that can be used to stop subscribing to the channel.
  * Returns the guid.
  */
-PhoneGap.Channel.prototype.subscribe = function(f, c, g) {
+Cordova.Channel.prototype.subscribe = function(f, c, g) {
     // need a function to call
     if (f == null) { return; }
 
     var func = f;
-    if (typeof c == "object" && f instanceof Function) { func = PhoneGap.close(c, f); }
+    if (typeof c == "object" && f instanceof Function) { func = Cordova.close(c, f); }
 
     g = g || func.observer_guid || f.observer_guid || this.guid++;
     func.observer_guid = g;
@@ -92,7 +92,7 @@ PhoneGap.Channel.prototype.subscribe = function(f, c, g) {
  * Like subscribe but the function is only called once and then it
  * auto-unsubscribes itself.
  */
-PhoneGap.Channel.prototype.subscribeOnce = function(f, c) {
+Cordova.Channel.prototype.subscribeOnce = function(f, c) {
     var g = null;
     var _this = this;
     var m = function() {
@@ -100,7 +100,7 @@ PhoneGap.Channel.prototype.subscribeOnce = function(f, c) {
         _this.unsubscribe(g);
     }
     if (this.fired) {
-        if (typeof c == "object" && f instanceof Function) { f = PhoneGap.close(c, f); }
+        if (typeof c == "object" && f instanceof Function) { f = Cordova.close(c, f); }
         f.apply(this, this.fireArgs);
     } else {
         g = this.subscribe(m);
@@ -111,7 +111,7 @@ PhoneGap.Channel.prototype.subscribeOnce = function(f, c) {
 /** 
  * Unsubscribes the function with the given guid from the channel.
  */
-PhoneGap.Channel.prototype.unsubscribe = function(g) {
+Cordova.Channel.prototype.unsubscribe = function(g) {
     if (g instanceof Function) { g = g.observer_guid; }
     this.handlers[g] = null;
     delete this.handlers[g];
@@ -120,7 +120,7 @@ PhoneGap.Channel.prototype.unsubscribe = function(g) {
 /** 
  * Calls all functions subscribed to this channel.
  */
-PhoneGap.Channel.prototype.fire = function(e) {
+Cordova.Channel.prototype.fire = function(e) {
     if (this.enabled) {
         var fail = false;
         for (var item in this.handlers) {
@@ -141,7 +141,7 @@ PhoneGap.Channel.prototype.fire = function(e) {
  * Calls the provided function only after all of the channels specified
  * have been fired.
  */
-PhoneGap.Channel.join = function(h, c) {
+Cordova.Channel.join = function(h, c) {
     var i = c.length;
     var f = function() {
         if (!(--i)) h();
@@ -154,11 +154,11 @@ PhoneGap.Channel.join = function(h, c) {
 
 /**
  * Add an initialization function to a queue that ensures it will run and initialize
- * application constructors only once PhoneGap has been initialized.
- * @param {Function} func The function callback you want run once PhoneGap is initialized
+ * application constructors only once Cordova has been initialized.
+ * @param {Function} func The function callback you want run once Cordova is initialized
  */
-PhoneGap.addConstructor = function(func) {
-    PhoneGap.onPhoneGapInit.subscribeOnce(function() {
+Cordova.addConstructor = function(func) {
+    Cordova.onCordovaInit.subscribeOnce(function() {
         // try {
             func();
         // } catch(e) {
@@ -185,7 +185,7 @@ if (!window.plugins) {
  * @param name      The plugin name
  * @param obj       The plugin object
  */
-PhoneGap.addPlugin = function(name, obj) {
+Cordova.addPlugin = function(name, obj) {
     if (!window.plugins[name]) {
         window.plugins[name] = obj;
     }
@@ -198,104 +198,104 @@ PhoneGap.addPlugin = function(name, obj) {
  * onDOMContentLoaded channel is fired when the DOM content 
  * of the page has been parsed.
  */
-PhoneGap.onDOMContentLoaded = new PhoneGap.Channel('onDOMContentLoaded');
+Cordova.onDOMContentLoaded = new Cordova.Channel('onDOMContentLoaded');
 
 /**
- * onNativeReady channel is fired when the PhoneGap native code
+ * onNativeReady channel is fired when the Cordova native code
  * has been initialized.
  */
-PhoneGap.onNativeReady = new PhoneGap.Channel('onNativeReady');
+Cordova.onNativeReady = new Cordova.Channel('onNativeReady');
 
 /**
- * onPhoneGapInit channel is fired when the web page is fully loaded and
- * PhoneGap native code has been initialized.
+ * onCordovaInit channel is fired when the web page is fully loaded and
+ * Cordova native code has been initialized.
  */
-PhoneGap.onPhoneGapInit = new PhoneGap.Channel('onPhoneGapInit');
+Cordova.onCordovaInit = new Cordova.Channel('onCordovaInit');
 
 /**
- * onPhoneGapReady channel is fired when the JS PhoneGap objects have been created.
+ * onCordovaReady channel is fired when the JS Cordova objects have been created.
  */
-PhoneGap.onPhoneGapReady = new PhoneGap.Channel('onPhoneGapReady');
+Cordova.onCordovaReady = new Cordova.Channel('onCordovaReady');
 
 /**
- * onPhoneGapInfoReady channel is fired when the PhoneGap device properties
+ * onCordovaInfoReady channel is fired when the Cordova device properties
  * has been set.
  */
-PhoneGap.onPhoneGapInfoReady = new PhoneGap.Channel('onPhoneGapInfoReady');
+Cordova.onCordovaInfoReady = new Cordova.Channel('onCordovaInfoReady');
 
 /**
- * onResume channel is fired when the PhoneGap native code
+ * onResume channel is fired when the Cordova native code
  * resumes.
  */
-PhoneGap.onResume = new PhoneGap.Channel('onResume');
+Cordova.onResume = new Cordova.Channel('onResume');
 
 /**
- * onPause channel is fired when the PhoneGap native code
+ * onPause channel is fired when the Cordova native code
  * pauses.
  */
-PhoneGap.onPause = new PhoneGap.Channel('onPause');
+Cordova.onPause = new Cordova.Channel('onPause');
 
 // _nativeReady is global variable that the native side can set
 // to signify that the native code is ready. It is a global since 
-// it may be called before any PhoneGap JS is ready.
-if (typeof _nativeReady !== 'undefined') { PhoneGap.onNativeReady.fire(); }
+// it may be called before any Cordova JS is ready.
+if (typeof _nativeReady !== 'undefined') { Cordova.onNativeReady.fire(); }
 
 /**
- * onDeviceReady is fired only after all PhoneGap objects are created and
+ * onDeviceReady is fired only after all Cordova objects are created and
  * the device properties are set.
  */
-PhoneGap.onDeviceReady = new PhoneGap.Channel('onDeviceReady');
+Cordova.onDeviceReady = new Cordova.Channel('onDeviceReady');
 
 /**
- * Create all PhoneGap objects once page has fully loaded and native side is ready.
+ * Create all Cordova objects once page has fully loaded and native side is ready.
  */
-PhoneGap.Channel.join(function() {
+Cordova.Channel.join(function() {
 
-    // Run PhoneGap constructors
-    PhoneGap.onPhoneGapInit.fire();
+    // Run Cordova constructors
+    Cordova.onCordovaInit.fire();
 
     // Fire event to notify that all objects are created
-    PhoneGap.onPhoneGapReady.fire();
+    Cordova.onCordovaReady.fire();
 
-}, [ PhoneGap.onDOMContentLoaded, PhoneGap.onNativeReady ]);
+}, [ Cordova.onDOMContentLoaded, Cordova.onNativeReady ]);
 
 /**
- * Fire onDeviceReady event once all constructors have run and PhoneGap info has been
+ * Fire onDeviceReady event once all constructors have run and Cordova info has been
  * received from native side.
  */
-PhoneGap.Channel.join(function() {
-    PhoneGap.onDeviceReady.fire();
+Cordova.Channel.join(function() {
+    Cordova.onDeviceReady.fire();
     
     // Fire the onresume event, since first one happens before JavaScript is loaded
-    PhoneGap.onResume.fire();
-}, [ PhoneGap.onPhoneGapReady, PhoneGap.onPhoneGapInfoReady]);
+    Cordova.onResume.fire();
+}, [ Cordova.onCordovaReady, Cordova.onCordovaInfoReady]);
 
 // Listen for DOMContentLoaded and notify our channel subscribers
 document.addEventListener('DOMContentLoaded', function() {
-    PhoneGap.onDOMContentLoaded.fire();
+    Cordova.onDOMContentLoaded.fire();
 }, false);
 
 // Intercept calls to document.addEventListener and watch for deviceready
-PhoneGap.m_document_addEventListener = document.addEventListener;
+Cordova.m_document_addEventListener = document.addEventListener;
 
 document.addEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
     if (e == 'deviceready') {
-        PhoneGap.onDeviceReady.subscribeOnce(handler);
+        Cordova.onDeviceReady.subscribeOnce(handler);
     } else if (e == 'resume') {
-        PhoneGap.onResume.subscribe(handler);
+        Cordova.onResume.subscribe(handler);
         // if subscribing listener after event has already fired, invoke the handler
-        if (PhoneGap.onResume.fired && handler instanceof Function) {
+        if (Cordova.onResume.fired && handler instanceof Function) {
             handler();
         }
     } else if (e == 'pause') {
-        PhoneGap.onPause.subscribe(handler);
+        Cordova.onPause.subscribe(handler);
     } else {
-        PhoneGap.m_document_addEventListener.call(document, evt, handler, capture);
+        Cordova.m_document_addEventListener.call(document, evt, handler, capture);
     }
 };
 
-PhoneGap.m_element_addEventListener = Element.prototype.addEventListener;
+Cordova.m_element_addEventListener = Element.prototype.addEventListener;
 
 /**
  * For BlackBerry, the touchstart event does not work so we need to do click
@@ -305,7 +305,7 @@ Element.prototype.addEventListener = function(evt, handler, capture) {
     if (evt === 'touchstart') {
         evt = 'click';
     }
-    PhoneGap.m_element_addEventListener.call(this, evt, handler, capture);
+    Cordova.m_element_addEventListener.call(this, evt, handler, capture);
 };
 
 /**
@@ -314,7 +314,7 @@ Element.prototype.addEventListener = function(evt, handler, capture) {
  * @param obj
  * @return
  */
-PhoneGap.clone = function(obj) {
+Cordova.clone = function(obj) {
     if(!obj) { 
         return obj;
     }
@@ -322,7 +322,7 @@ PhoneGap.clone = function(obj) {
     if(obj instanceof Array){
         var retVal = new Array();
         for(var i = 0; i < obj.length; ++i){
-            retVal.push(PhoneGap.clone(obj[i]));
+            retVal.push(Cordova.clone(obj[i]));
         }
         return retVal;
     }
@@ -342,13 +342,13 @@ PhoneGap.clone = function(obj) {
     retVal = new Object();
     for(i in obj){
         if(!(i in retVal) || retVal[i] != obj[i]) {
-            retVal[i] = PhoneGap.clone(obj[i]);
+            retVal[i] = Cordova.clone(obj[i]);
         }
     }
     return retVal;
 };
 
-PhoneGap.close = function(context, func, params) {
+Cordova.close = function(context, func, params) {
     if (typeof params === 'undefined') {
         return function() {
             return func.apply(context, arguments);
@@ -360,9 +360,9 @@ PhoneGap.close = function(context, func, params) {
     }
 };
 
-PhoneGap.callbackId = 0;
-PhoneGap.callbacks  = {};
-PhoneGap.callbackStatus = {
+Cordova.callbackId = 0;
+Cordova.callbacks  = {};
+Cordova.callbackStatus = {
     NO_RESULT: 0,
     OK: 1,
     CLASS_NOT_FOUND_EXCEPTION: 2,
@@ -381,14 +381,14 @@ PhoneGap.callbackStatus = {
  * @param callbackId
  * @param args
  */
-PhoneGap.callbackSuccess = function(callbackId, args) {
-    if (PhoneGap.callbacks[callbackId]) {
+Cordova.callbackSuccess = function(callbackId, args) {
+    if (Cordova.callbacks[callbackId]) {
 
         // If result is to be sent to callback
-        if (args.status == PhoneGap.callbackStatus.OK) {
+        if (args.status == Cordova.callbackStatus.OK) {
             try {
-                if (PhoneGap.callbacks[callbackId].success) {
-                    PhoneGap.callbacks[callbackId].success(args.message);
+                if (Cordova.callbacks[callbackId].success) {
+                    Cordova.callbacks[callbackId].success(args.message);
                 }
             }
             catch (e) {
@@ -398,7 +398,7 @@ PhoneGap.callbackSuccess = function(callbackId, args) {
 
         // Clear callback if not expecting any more results
         if (!args.keepCallback) {
-            delete PhoneGap.callbacks[callbackId];
+            delete Cordova.callbacks[callbackId];
         }
     }
 };
@@ -409,11 +409,11 @@ PhoneGap.callbackSuccess = function(callbackId, args) {
  * @param callbackId
  * @param args
  */
-PhoneGap.callbackError = function(callbackId, args) {
-    if (PhoneGap.callbacks[callbackId]) {
+Cordova.callbackError = function(callbackId, args) {
+    if (Cordova.callbacks[callbackId]) {
         try {
-            if (PhoneGap.callbacks[callbackId].fail) {
-                PhoneGap.callbacks[callbackId].fail(args.message);
+            if (Cordova.callbacks[callbackId].fail) {
+                Cordova.callbacks[callbackId].fail(args.message);
             }
         }
         catch (e) {
@@ -422,7 +422,7 @@ PhoneGap.callbackError = function(callbackId, args) {
 
         // Clear callback if not expecting any more results
         if (!args.keepCallback) {
-            delete PhoneGap.callbacks[callbackId];
+            delete Cordova.callbacks[callbackId];
         }
     }
 };
@@ -432,15 +432,15 @@ PhoneGap.callbackError = function(callbackId, args) {
  *
  * @return
  */
-PhoneGap.createUUID = function() {
-    return PhoneGap.UUIDcreatePart(4) + '-' +
-        PhoneGap.UUIDcreatePart(2) + '-' +
-        PhoneGap.UUIDcreatePart(2) + '-' +
-        PhoneGap.UUIDcreatePart(2) + '-' +
-        PhoneGap.UUIDcreatePart(6);
+Cordova.createUUID = function() {
+    return Cordova.UUIDcreatePart(4) + '-' +
+        Cordova.UUIDcreatePart(2) + '-' +
+        Cordova.UUIDcreatePart(2) + '-' +
+        Cordova.UUIDcreatePart(2) + '-' +
+        Cordova.UUIDcreatePart(6);
 };
 
-PhoneGap.UUIDcreatePart = function(length) {
+Cordova.UUIDcreatePart = function(length) {
     var uuidpart = "";
     for (var i=0; i<length; i++) {
         var uuidchar = parseInt((Math.random() * 256)).toString(16);
@@ -452,26 +452,26 @@ PhoneGap.UUIDcreatePart = function(length) {
     return uuidpart;
 };
 /**
- * Execute a PhoneGap command in a queued fashion, to ensure commands do not
- * execute with any race conditions, and only run when PhoneGap is ready to
+ * Execute a Cordova command in a queued fashion, to ensure commands do not
+ * execute with any race conditions, and only run when Cordova is ready to
  * receive them.
  *
  */
-PhoneGap.exec = function() { 
+Cordova.exec = function() { 
 	
-    PhoneGap.queue.commands.push(arguments);
-    if (PhoneGap.queue.timer == null)
-        PhoneGap.queue.timer = setInterval(PhoneGap.run_command, 10);
+    Cordova.queue.commands.push(arguments);
+    if (Cordova.queue.timer == null)
+        Cordova.queue.timer = setInterval(Cordova.run_command, 10);
 };
 
 /**
- * Internal function used to dispatch the request to PhoneGap.  It processes the
+ * Internal function used to dispatch the request to Cordova.  It processes the
  * command queue and executes the next command on the list.  Simple parameters are passed
  * as arguments on the url.  JavaScript objects converted into a JSON string and passed as a
  * query string argument of the url.
  * Arguments may be in one of two formats:
  *   FORMAT ONE (preferable)
- * The native side will call PhoneGap.callbackSuccess or PhoneGap.callbackError,
+ * The native side will call Cordova.callbackSuccess or Cordova.callbackError,
  * depending upon the result of the action.
  *
  * @param {Function} success    The success callback
@@ -481,19 +481,19 @@ PhoneGap.exec = function() {
  * @param {String[]} [args]     Zero or more arguments to pass to the method
  *  	
  * FORMAT TWO
- * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
+ * @param {String} command Command to be run in Cordova, e.g. "ClassName.method"
  * @param {String[]} [args] Zero or more arguments to pass to the method
  * object parameters are passed as an array object [object1, object2] each object will be passed as JSON strings 
  * @private
  */
-PhoneGap.run_command = function() {
-    if (!PhoneGap.available() || !PhoneGap.queue.ready)
+Cordova.run_command = function() {
+    if (!Cordova.available() || !Cordova.queue.ready)
         return;
 
-    var args = PhoneGap.queue.commands.shift();
-    if (PhoneGap.queue.commands.length == 0) {
-        clearInterval(PhoneGap.queue.timer);
-        PhoneGap.queue.timer = null;
+    var args = Cordova.queue.commands.shift();
+    if (Cordova.queue.commands.length == 0) {
+        clearInterval(Cordova.queue.timer);
+        Cordova.queue.timer = null;
     }
 	
 	var service;
@@ -506,8 +506,8 @@ PhoneGap.run_command = function() {
  			service = args[2] + "." + args[3];
 			args = args[4];  //array of arguments to 
       if (success || fail) {
-          callbackId = service + PhoneGap.callbackId++;
-          PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
+          callbackId = service + Cordova.callbackId++;
+          Cordova.callbacks[callbackId] = {success:success, fail:fail};
       }
  		} else { 
  			service = args[0]; 
@@ -537,11 +537,11 @@ PhoneGap.run_command = function() {
     	if (query.length > 0) {
         	url += "?" + query.join("&");
     	}
-      PhoneGap.queue.ready = false;
+      Cordova.queue.ready = false;
       document.location = url;
    
     } catch (e) {
-        console.log("PhoneGapExec Error: "+e);
+        console.log("CordovaExec Error: "+e);
     }
     
 

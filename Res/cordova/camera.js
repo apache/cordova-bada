@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -82,9 +82,9 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
     if (typeof this.options.sourceType == "number") {
         sourceType = this.options.sourceType;
     }
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Camera", "getPicture", [quality, destinationType, sourceType]);
+    Cordova.exec(successCallback, errorCallback, "com.cordova.Camera", "getPicture", [quality, destinationType, sourceType]);
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
 	if (typeof navigator.camera == "undefined") navigator.camera = new Camera();
 });

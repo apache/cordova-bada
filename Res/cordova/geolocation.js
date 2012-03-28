@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -42,7 +42,7 @@ PositionError.TIMEOUT = 3;
  * @param {PositionOptions} options     The options for getting the position data. (OPTIONAL)
  */
 Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallback, options) {
-    this.id = PhoneGap.createUUID();
+    this.id = Cordova.createUUID();
     // default maximumAge value should be 0, and set if positive 
     var maximumAge = 0;
 
@@ -61,7 +61,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
             timeout = (options.timeout < 0) ? 0 : options.timeout;
         }
     }
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Geolocation", "getCurrentPosition", [maximumAge, timeout, enableHighAccuracy]);
+    Cordova.exec(successCallback, errorCallback, "com.cordova.Geolocation", "getCurrentPosition", [maximumAge, timeout, enableHighAccuracy]);
 }
 
 /**
@@ -95,8 +95,8 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
             timeout = (options.timeout < 0) ? 0 : options.timeout;
         }
     }
-    this.id = PhoneGap.createUUID();
-    PhoneGap.exec(successCallback, errorCallback, "com.phonegap.Geolocation", "watchPosition", [maximumAge, timeout, enableHighAccuracy]);
+    this.id = Cordova.createUUID();
+    Cordova.exec(successCallback, errorCallback, "com.cordova.Geolocation", "watchPosition", [maximumAge, timeout, enableHighAccuracy]);
     return this.id;
 };
 
@@ -106,19 +106,19 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
  * @param {String} id       The ID of the watch returned from #watchPosition
  */
 Geolocation.prototype.clearWatch = function(id) {
-    PhoneGap.exec(null, null, "com.phonegap.Geolocation", "stop", []);
+    Cordova.exec(null, null, "com.cordova.Geolocation", "stop", []);
     this.id = null;
 };
 
 /**
- * Force the PhoneGap geolocation to be used instead of built-in.
+ * Force the Cordova geolocation to be used instead of built-in.
  */
-Geolocation.usingPhoneGap = false;
-Geolocation.usePhoneGap = function() {
-    if (Geolocation.usingPhoneGap) {
+Geolocation.usingCordova = false;
+Geolocation.useCordova = function() {
+    if (Geolocation.usingCordova) {
         return;
     }
-    Geolocation.usingPhoneGap = true;
+    Geolocation.usingCordova = true;
 
     // Set built-in geolocation methods to our own implementations
     // (Cannot replace entire geolocation, but can replace individual methods)
@@ -129,12 +129,12 @@ Geolocation.usePhoneGap = function() {
     navigator.geolocation.fail = navigator._geo.fail;
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     navigator._geo = new Geolocation();
 
-    // if no native geolocation object, use PhoneGap geolocation
+    // if no native geolocation object, use Cordova geolocation
     if (typeof navigator.geolocation == 'undefined') {
         navigator.geolocation = navigator._geo;
-        Geolocation.usingPhoneGap = true;
+        Geolocation.usingCordova = true;
     }
 });

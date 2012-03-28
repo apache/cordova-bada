@@ -65,8 +65,8 @@ DebugConsole.prototype.processMessage = function(message, maxDepth) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.log = function(message, maxDepth) {
-    if (PhoneGap.available && this.logLevel <= DebugConsole.INFO_LEVEL)
-        PhoneGap.exec(null, null, 'com.phonegap.DebugConsole', 'log',
+    if (Cordova.available && this.logLevel <= DebugConsole.INFO_LEVEL)
+        Cordova.exec(null, null, 'com.cordova.DebugConsole', 'log',
             [this.processMessage(message, maxDepth), 'INFO']
         );
     else
@@ -78,8 +78,8 @@ DebugConsole.prototype.log = function(message, maxDepth) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.warn = function(message, maxDepth) {
-    if (PhoneGap.available && this.logLevel <= DebugConsole.WARN_LEVEL)
-        PhoneGap.exec(null, null, 'com.phonegap.DebugConsole', 'log',
+    if (Cordova.available && this.logLevel <= DebugConsole.WARN_LEVEL)
+        Cordova.exec(null, null, 'com.cordova.DebugConsole', 'log',
             [this.processMessage(message, maxDepth), 'WARN']
         );
     else
@@ -91,15 +91,15 @@ DebugConsole.prototype.warn = function(message, maxDepth) {
  * @param {Object|String} message Message or object to print to the console
  */
 DebugConsole.prototype.error = function(message, maxDepth) {
-    if (PhoneGap.available && this.logLevel <= DebugConsole.ERROR_LEVEL)
-        PhoneGap.exec(null, null, 'com.phonegap.DebugConsole', 'log',
+    if (Cordova.available && this.logLevel <= DebugConsole.ERROR_LEVEL)
+        Cordova.exec(null, null, 'com.cordova.DebugConsole', 'log',
             [this.processMessage(message, maxDepth), 'ERROR']
         );
     else
         console.error(message);
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     window.console = new DebugConsole();
     window.debug = new DebugConsole(true);
 });

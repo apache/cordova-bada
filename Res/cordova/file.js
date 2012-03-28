@@ -1,6 +1,6 @@
 
 /*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * Cordova is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
@@ -87,7 +87,7 @@ FileMgr.prototype.getFreeDiskSpace = function(filePath) {
  * @param errorCallback     Callback invoked on error
  */
 FileMgr.prototype.readAsText = function(fileName, encoding, successCallback, errorCallback) {
-    PhoneGap.exec(successCallback, errorCallback, "File", "readAsText", [fileName, encoding]);
+    Cordova.exec(successCallback, errorCallback, "File", "readAsText", [fileName, encoding]);
 };
 
 /**
@@ -98,7 +98,7 @@ FileMgr.prototype.readAsText = function(fileName, encoding, successCallback, err
  * @param errorCallback     Callback invoked on error
  */
 FileMgr.prototype.readAsDataURL = function(fileName, successCallback, errorCallback) {
-    PhoneGap.exec(successCallback, errorCallback, "File", "readAsDataURL", [fileName]);
+    Cordova.exec(successCallback, errorCallback, "File", "readAsDataURL", [fileName]);
 };
 
 /**
@@ -111,7 +111,7 @@ FileMgr.prototype.readAsDataURL = function(fileName, successCallback, errorCallb
  * @param errorCallback     Callback invoked on error
  */
 FileMgr.prototype.write = function(fileName, data, position, successCallback, errorCallback) {
-    PhoneGap.exec(successCallback, errorCallback, "File", "write", [fileName, data, position]);
+    Cordova.exec(successCallback, errorCallback, "File", "write", [fileName, data, position]);
 };
 
 /**
@@ -161,7 +161,7 @@ FileMgr.prototype.getFileProperties = function(fileName) {
  * @param errorCallback     Callback invoked on error
  */
 FileMgr.prototype.truncate = function(fileName, size, successCallback, errorCallback) {
-    PhoneGap.exec(successCallback, errorCallback, "File", "truncate", [fileName, size]);
+    Cordova.exec(successCallback, errorCallback, "File", "truncate", [fileName, size]);
 };
 
 /**
@@ -212,7 +212,7 @@ FileMgr.prototype.deleteDirectory = function(dirName) {
     blackberry.io.dir.deleteDirectory(dirName);
 };
 
-PhoneGap.addConstructor(function() {
+Cordova.addConstructor(function() {
     if (typeof navigator.fileMgr == "undefined") navigator.fileMgr = new FileMgr();
 });
 
