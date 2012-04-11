@@ -20,7 +20,7 @@ function onGeoLocationError(error) {
 function getCurrentPosition() {
 	var geolocation = document.getElementById('geolocation');
 	try {
-    Geolocation.usePhoneGap();
+    Geolocation.useCordova();
 		geolocation.style.display = 'block';
 		navigator.geolocation.getCurrentPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
 	} catch(e) {
@@ -33,7 +33,7 @@ function toggleWatchPosition(em) {
 		em.value = "GeoLocation.StopWatching";
 		geolocation.style.display = 'block';
 		try {
-			Geolocation.usePhoneGap();
+			Geolocation.useCordova();
 			watchLocationID = navigator.geolocation.watchPosition(onGeoLocationSuccess, onGeoLocationError, { frequency: 3000 });
 		} catch(e) {
 			alert(e.message);
@@ -145,7 +145,7 @@ function getSystemInfo() {
     var system = document.getElementById("system");
     system.style.display = "block";
     system.innerHTML = 'Device Name: '     + device.name     + '<br />' + 
-                       'Device PhoneGap: ' + device.phonegap + '<br />' + 
+                       'Device Cordova: '  + device.cordova + '<br />' + 
                        'Device Platform: ' + device.platform + '<br />' + 
                        'Device UUID: '     + device.uuid     + '<br />' + 
                        'Device Version: '  + device.version  + '<br />';
