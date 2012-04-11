@@ -85,43 +85,43 @@ Notification::Dialog() {
 		messageBox.ShowAndWait(modalResult);
 		switch(modalResult) {
 		case MSGBOX_RESULT_CLOSE:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Close')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Close')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_OK:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('OK')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('OK')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_CANCEL:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Cancel')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Cancel')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_YES:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Yes')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Yes')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_NO:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('No')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('No')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_ABORT:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Abort')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Abort')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_TRY:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Try')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Try')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_RETRY:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Retry')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Retry')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_IGNORE:
-			eval.Format(128, L"PhoneGap.callbacks['%S'].success('Ignore')", callbackId.GetPointer());
+			eval.Format(128, L"Cordova.callbacks['%S'].success('Ignore')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		case MSGBOX_RESULT_CONTINUE:
-			eval.Format(64, L"PhoneGap.callbacks['%S'].success('Continue')", callbackId.GetPointer());
+			eval.Format(64, L"Cordova.callbacks['%S'].success('Continue')", callbackId.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 			break;
 		}

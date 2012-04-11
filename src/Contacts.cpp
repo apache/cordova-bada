@@ -409,11 +409,11 @@ Contacts::Create(const int cid) {
 
 	if(IsFailed(r)) {
 		AppLogException("Could not add contact");
-		eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'%s',code:%d})", callbackId.GetPointer(), r, GetErrorMessage(r));
+		eval.Format(128, L"Cordova.callbacks['%S'].fail({message:'%s',code:%d})", callbackId.GetPointer(), r, GetErrorMessage(r));
 		pWeb->EvaluateJavascriptN(eval);
 	} else {
 		AppLogDebug("Contact Successfully Added");
-		eval.Format(128, L"PhoneGap.callbacks['%S'].success({message:'Contact added successfully'})", callbackId.GetPointer());
+		eval.Format(128, L"Cordova.callbacks['%S'].success({message:'Contact added successfully'})", callbackId.GetPointer());
 		AppLogDebug("%S", eval.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	}
@@ -544,10 +544,10 @@ Contacts::Find(const String& filter) {
 
 	delete value;
 	if(length > 0) {
-		eval.Format(128, L"PhoneGap.callbacks['%S'].success(navigator.service.contacts.results)", callbackId.GetPointer());
+		eval.Format(128, L"Cordova.callbacks['%S'].success(navigator.service.contacts.results)", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	} else {
-		eval.Format(128, L"PhoneGap.callbacks['%S'].fail({message:'no contacts found',code:00})", callbackId.GetPointer());
+		eval.Format(128, L"Cordova.callbacks['%S'].fail({message:'no contacts found',code:00})", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	}
 }
@@ -571,12 +571,12 @@ Contacts::Remove(const String& idStr) {
 		r = addressbook.RemoveContact(id);
 		if(IsFailed(r)) {
 			AppLogDebug("Contact Could not be removed %s %d", GetErrorMessage(r), r);
-			eval.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'%s', code:ContactError.NOT_FOUND_ERROR})",
+			eval.Format(256, L"Cordova.callbacks['%S'].fail({message:'%s', code:ContactError.NOT_FOUND_ERROR})",
 															 callbackId.GetPointer(), GetErrorMessage(r));
 			pWeb->EvaluateJavascriptN(eval);
 		} else {
 			AppLogDebug("Contact %S removed", idStr.GetPointer());
-			eval.Format(256, L"PhoneGap.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
+			eval.Format(256, L"Cordova.callbacks['%S'].success({message:'Contact with ID %d removed', code:01})", callbackId.GetPointer(), id);
 			pWeb->EvaluateJavascriptN(eval);
 		}
 	}

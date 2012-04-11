@@ -74,7 +74,7 @@ Kamera::OnAppControlCompleted (const String &appControlId, const String &operati
 
 		if(IsFailed(r)) {
 			AppLogException("Could not copy picture");
-			eval.Format(512, L"PhoneGap.callbacks['%S'].fail('Could not copy picture')", callbackId.GetPointer());
+			eval.Format(512, L"Cordova.callbacks['%S'].fail('Could not copy picture')", callbackId.GetPointer());
 			AppLogDebug("%S", eval.GetPointer());
 			pWeb->EvaluateJavascriptN(eval);
 		}
@@ -82,7 +82,7 @@ Kamera::OnAppControlCompleted (const String &appControlId, const String &operati
 //		Uri imageUri;
 //		imageUri.setUri(homeFilename);
 		eval.Clear();
-		eval.Format(512, L"PhoneGap.callbacks['%S'].success('file://%S')", callbackId.GetPointer(), homeFilename.GetPointer());
+		eval.Format(512, L"Cordova.callbacks['%S'].success('file://%S')", callbackId.GetPointer(), homeFilename.GetPointer());
 		AppLogDebug("%S", eval.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	  }
@@ -90,14 +90,14 @@ Kamera::OnAppControlCompleted (const String &appControlId, const String &operati
 	  {
 		AppLog("Camera capture canceled.");
 		String eval;
-		eval.Format(512, L"PhoneGap.callbacks['%S'].fail('Camera capture canceled')", callbackId.GetPointer());
+		eval.Format(512, L"Cordova.callbacks['%S'].fail('Camera capture canceled')", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	  }
 	  else if (pCaptureResult->Equals(String(APPCONTROL_RESULT_FAILED)))
 	  {
 		AppLog("Camera capture failed.");
 		String eval;
-		eval.Format(512, L"PhoneGap.callbacks['%S'].fail('Camera capture failed')", callbackId.GetPointer());
+		eval.Format(512, L"Cordova.callbacks['%S'].fail('Camera capture failed')", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(eval);
 	  }
 	}

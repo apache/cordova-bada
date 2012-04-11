@@ -1,5 +1,5 @@
 /**
- * Name        : PhoneGap
+ * Name        : Cordova
  * Version     : 
  * Vendor      : 
  * Description : 

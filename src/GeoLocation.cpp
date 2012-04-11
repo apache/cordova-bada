@@ -86,12 +86,12 @@ GeoLocation::GetLastKnownLocation() {
 		String coordinates;
 		coordinates.Format(256, L"new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
 		String res;
-		res.Format(512, L"PhoneGap.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
+		res.Format(512, L"Cordova.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
 		pWeb->EvaluateJavascriptN(res);
 	} else {
-		AppLogDebug("PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
+		AppLogDebug("Cordova.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		String res;
-		res.Format(256, L"PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
+		res.Format(256, L"Cordova.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 	}
 }
@@ -111,12 +111,12 @@ GeoLocation::OnLocationUpdated(Location& location) {
 		String coordinates;
 		coordinates.Format(256, L"new Coordinates(%d,%d,%f,%f,%f,%f)", latitude, longitude, altitude, speed, accuracy, heading);
 		String res;
-		res.Format(512, L"PhoneGap.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
+		res.Format(512, L"Cordova.callbacks['%S'].success(new Position(%S,%d))", callbackId.GetPointer(), coordinates.GetPointer(), timestamp);
 		pWeb->EvaluateJavascriptN(res);
 	} else {
-		AppLogDebug("PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
+		AppLogDebug("Cordova.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		String res;
-		res.Format(256, L"PhoneGap.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
+		res.Format(256, L"Cordova.callbacks['%S'].fail(new PositionError(0001,'Could not get location'))", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 	}
 }

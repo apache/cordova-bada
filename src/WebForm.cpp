@@ -109,7 +109,7 @@ WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType typ
 //		return true;
 		return false;
 	} else if(url.StartsWith("http://", 0) || url.StartsWith("https://", 0)) {
-		AppLogDebug("Non PhoneGap command. External URL. Launching WebBrowser");
+		AppLogDebug("Non Cordova command. External URL. Launching WebBrowser");
 		LaunchBrowser(url);
 		return false;
 	}
@@ -119,18 +119,18 @@ WebForm::OnLoadingRequested (const Osp::Base::String& url, WebNavigationType typ
 
 void
 WebForm::OnLoadingCompleted() {
-	// Setting DeviceInfo to initialize PhoneGap (should be done only once) and firing onNativeReady event
+	// Setting DeviceInfo to initialize Cordova (should be done only once) and firing onNativeReady event
 	String* deviceInfo;
 	deviceInfo = __pWeb->EvaluateJavascriptN(L"window.device.uuid");
 	if(deviceInfo->IsEmpty()) {
 		device->SetDeviceInfo();
-		__pWeb->EvaluateJavascriptN("PhoneGap.onNativeReady.fire();");
+		__pWeb->EvaluateJavascriptN("Cordova.onNativeReady.fire();");
 	} else {
 		//AppLogDebug("DeviceInfo = %S;", deviceInfo->GetPointer());
 	}
 	delete deviceInfo;
 
-	// Analyzing PhoneGap command
+	// Analyzing Cordova command
 	if(__cordovaCommand) {
 		if(__cordovaCommand->StartsWith(L"gap://com.cordova.Geolocation", 0)) {
 			geolocation->Run(*__cordovaCommand);
@@ -157,12 +157,12 @@ WebForm::OnLoadingCompleted() {
 			camera->Run(*__cordovaCommand);
 		}
 		// Tell the JS code that we got this command, and we're ready for another
-		__pWeb->EvaluateJavascriptN(L"PhoneGap.queue.ready = true;");
+		__pWeb->EvaluateJavascriptN(L"Cordova.queue.ready = true;");
 		delete __cordovaCommand;
 		__cordovaCommand = null;
 	}
 	else {
-		AppLogDebug("Non PhoneGap command completed");
+		AppLogDebug("Non Cordova command completed");
 	}
 }
 

@@ -60,7 +60,7 @@ Accelerometer::StartSensor(void) {
 	} else {
 		AppLogException("Acceleration sensor is not available");
 		String res;
-		res.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'Acceleration sensor is not available',code:'001'});");
+		res.Format(256, L"Cordova.callbacks['%S'].fail({message:'Acceleration sensor is not available',code:'001'});");
 		pWeb->EvaluateJavascriptN(res);
 		return false;
 	}
@@ -90,7 +90,7 @@ Accelerometer::IsStarted() {
 void
 Accelerometer::GetLastAcceleration() {
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"Cordova.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 
 	res.Clear();
@@ -109,7 +109,7 @@ Accelerometer::OnDataReceived(SensorType sensorType, SensorData& sensorData, res
 	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timestamp);
 
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"Cordova.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 
 	res.Clear();

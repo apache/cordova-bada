@@ -64,7 +64,7 @@ Compass::StartSensor(void) {
 	} else {
 		AppLogException("Compass sensor is not available");
 		String res;
-		res.Format(256, L"PhoneGap.callbacks['%S'].fail({message:'Magnetic sensor is not available',code:'001'});", callbackId.GetPointer());
+		res.Format(256, L"Cordova.callbacks['%S'].fail({message:'Magnetic sensor is not available',code:'001'});", callbackId.GetPointer());
 		pWeb->EvaluateJavascriptN(res);
 		return false;
 	}
@@ -94,7 +94,7 @@ Compass::IsStarted() {
 void
 Compass::GetLastHeading() {
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"Cordova.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 }
 
@@ -109,6 +109,6 @@ Compass::OnDataReceived(SensorType sensorType, SensorData& sensorData, result r)
 	AppLogDebug("x: %f, y: %f, z: %f timestamp: %d", x, y, z, timestamp);
 
 	String res;
-	res.Format(256, L"PhoneGap.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
+	res.Format(256, L"Cordova.callbacks['%S'].success({x:%f,y:%f,z:%f,timestamp:%d});", callbackId.GetPointer(), x, y, z, timestamp);
 	pWeb->EvaluateJavascriptN(res);
 }
