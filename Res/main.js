@@ -124,6 +124,7 @@ function hostIsReachable() {
   try {
     var network = document.getElementById('network');
     var callback = function(reachability) {
+      console.log(reachability);
       var networkState = reachability.code;
       var http_code = reachability.http_code;
       var states = [];

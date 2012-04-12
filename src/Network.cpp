@@ -117,7 +117,7 @@ Network::OnTransactionCompleted (HttpSession &httpSession, HttpTransaction &http
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 
-	res.Format(128, L"Cordova.callbacks['%S'].success(%d);", callbackId.GetPointer(), status);
+	res.Format(128, L"Cordova.callbacks['%S'].success({code:%d,http_code:%d});", callbackId.GetPointer(), status, statusCode);
 	AppLogDebug("%S", res.GetPointer());
 	pWeb->EvaluateJavascriptN(res);
 }
