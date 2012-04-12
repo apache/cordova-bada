@@ -1,5 +1,5 @@
 /*
-* PhoneGap Sample App
+* Cordova Sample App
 *
 */
 
