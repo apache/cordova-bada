@@ -385,6 +385,6 @@ function getPicture() {
     }
     navigator.camera.getPicture(successCallback, errorCallback, {});
   } catch(e) {
-    debugPring(e.message);
+    debugPrint(e.message);
   }
 }
