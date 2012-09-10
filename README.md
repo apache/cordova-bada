@@ -25,7 +25,7 @@ Running on a target device
 --------------------------
 
 1. Follow [instructions](http://bit.ly/dK44XJ)
-2. Generate a new app on developer.bada.com, download the manifest.xml file and put it in the root dir of your app (overwritting the existing one).
+2. Generate a new app on developer.bada.com, download the manifest.xml file and put it in the root dir of your app (overwriting the existing one).
 3. Right click on your project and select Build configuration => Set Active => Target Debug in the Bada IDE
 4. Build&Run
 
