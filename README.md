@@ -15,7 +15,7 @@ Steps to build a Cordova app
 4. Run cordova.bat under Res/cordova directory
 5. Build&Run!
 
-Runnning in the simulator
+Running in the simulator
 -------------------------
 
 1. Right click on your project and select Build Configuration => Set Active => Simulator Debug in the Bada IDE
